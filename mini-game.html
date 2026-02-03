@@ -3,238 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tiberium RTS Prototype</title>
+<title>Tiberium Clicker</title>
 <style>
-body { margin:0; background:#000; overflow:hidden; font-family:Arial; }
-#ui { position:absolute; top:10px; left:10px; color:#00ff88; z-index:10; }
-canvas { display:block; }
-button { background:#003322; color:#00ff88; border:1px solid #00ff88; padding:6px; margin-top:5px; }
+body { margin:0; background:#111; color:#0f0; font-family:Arial, sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:20px; }
+button { font-size:16px; padding:10px; margin:5px; background:#222; color:#0f0; border:2px solid #0f0; cursor:pointer; }
+#stats { margin-top:10px; }
+#buildings { margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; }
+.building { border:1px solid #0f0; padding:10px; margin:5px; }
+.upgrades { margin-top:20px; }
 </style>
 </head>
 <body>
 
-<div id="ui">
-  <div>Units: <span id="unitCount">0</span></div>
-  <button onclick="spawnUnit()">Deploy Crawler Tank</button>
+<h1>Tiberium Clicker</h1>
+<button id="clickButton">Harvest Tiberium (+<span id="clickPower">1</span>)</button>
+<div id="stats">
+  <div>Tiberium: <span id="tiberium">0</span></div>
+  <div>TPS: <span id="tps">0</span></div>
 </div>
-
-<canvas id="game"></canvas>
+<div id="buildings"></div>
+<div class="upgrades" id="upgrades"></div>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// ===== Game State =====
+let gameData = {
+    tiberium: 0,
+    clickPower: 1,
+    buildings: {},
+    upgrades: {},
+    goldenTiberiumActive: false
+};
 
-// ===== Tile Map System =====
-const TILE_SIZE = 40;
-const MAP_COLS = Math.ceil(canvas.width / TILE_SIZE);
-const MAP_ROWS = Math.ceil(canvas.height / TILE_SIZE);
+const buildingTypes = [
+    {name:'Harvester', baseCost:10, tps:1},
+    {name:'Refinery', baseCost:100, tps:10},
+    {name:'Lab', baseCost:1000, tps:80},
+    {name:'Crystal', baseCost:10000, tps:470}
+];
 
-// 0 = dirt, 1 = grass, 2 = tiberium field, 3 = rock
-let map = [];
+const upgradeTypes = [
+    {name:'Click Booster', cost:50, effect:'clickPower', multiplier:2, unlocked:false},
+    {name:'Harvester Efficiency', cost:500, effect:'Harvester', multiplier:2, unlocked:false}
+];
 
-function generateMap() {
-  for (let y = 0; y < MAP_ROWS; y++) {
-    let row = [];
-    for (let x = 0; x < MAP_COLS; x++) {
-      let rand = Math.random();
-      if (rand < 0.1) row.push(2);          // Tiberium
-      else if (rand < 0.15) row.push(3);    // Rock
-      else if (rand < 0.6) row.push(1);     // Grass
-      else row.push(0);                     // Dirt
-    }
-    map.push(row);
-  }
+// Load saved game
+if(localStorage.getItem('tiberiumClicker')){
+    gameData = JSON.parse(localStorage.getItem('tiberiumClicker'));
 }
 
-function drawTile(x, y, type) {
-  const px = x * TILE_SIZE;
-  const py = y * TILE_SIZE;
+// ===== UI Setup =====
+const tiberiumDisplay = document.getElementById('tiberium');
+const tpsDisplay = document.getElementById('tps');
+const clickPowerDisplay = document.getElementById('clickPower');
+const buildingsDiv = document.getElementById('buildings');
+const upgradesDiv = document.getElementById('upgrades');
 
-  if (type === 0) {
-    ctx.fillStyle = "#3b2f1f"; // dirt
-    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
-  }
+// Initialize buildings
+buildingTypes.forEach(b=>{
+    if(!gameData.buildings[b.name]) gameData.buildings[b.name]={count:0,cost:b.baseCost};
+    let div = document.createElement('div');
+    div.className='building';
+    div.id='building-'+b.name;
+    div.innerHTML=`<strong>${b.name}</strong><br>Owned: <span class='count'>${gameData.buildings[b.name].count}</span><br>Cost: <span class='cost'>${gameData.buildings[b.name].cost}</span><br><button onclick='buyBuilding("${b.name}")'>Buy</button>`;
+    buildingsDiv.appendChild(div);
+});
 
-  if (type === 1) {
-    ctx.fillStyle = "#1e3d1e"; // grass
-    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
-  }
+// Initialize upgrades
+upgradeTypes.forEach(u=>{
+    if(!gameData.upgrades[u.name]) gameData.upgrades[u.name]={owned:false};
+    let div = document.createElement('div');
+    div.className='building';
+    div.id='upgrade-'+u.name;
+    div.innerHTML=`<strong>${u.name}</strong><br>Cost: ${u.cost}<br><button onclick='buyUpgrade("${u.name}")'>Buy</button>`;
+    upgradesDiv.appendChild(div);
+});
 
-  if (type === 2) {
-    ctx.fillStyle = "#1e3d1e";
-    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
-
-    // Crystal cluster
-    ctx.fillStyle = "#00ff88";
-    ctx.beginPath();
-    ctx.moveTo(px + TILE_SIZE/2, py + 8);
-    ctx.lineTo(px + TILE_SIZE/2 + 6, py + 20);
-    ctx.lineTo(px + TILE_SIZE/2 - 6, py + 20);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = "rgba(0,255,150,0.4)";
-    ctx.beginPath();
-    ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 10, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  if (type === 3) {
-    ctx.fillStyle = "#2a2a2a";
-    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
-
-    ctx.fillStyle = "#555";
-    ctx.beginPath();
-    ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 10, 0, Math.PI*2);
-    ctx.fill();
-  }
-}
-
-function drawMap() {
-  for (let y = 0; y < MAP_ROWS; y++) {
-    for (let x = 0; x < MAP_COLS; x++) {
-      drawTile(x, y, map[y][x]);
-    }
-  }
-}
-
-// ===== Units =====
-let units = [];
-let enemies = [];
-let selected = null;
-
-function spawnUnit() {
-  units.push({
-    x: 120,
-    y: 120,
-    size: 26,
-    targetX: null,
-    targetY: null,
-    hp: 100,
-    angle: 0
-  });
-  document.getElementById("unitCount").innerText = units.length;
-}
-
-function spawnEnemy() {
-  enemies.push({
-    x: canvas.width - 200,
-    y: 200,
-    size: 28,
-    hp: 120
-  });
-}
-
-function drawTankUnit(u) {
-  ctx.save();
-  ctx.translate(u.x + u.size/2, u.y + u.size/2);
-  ctx.rotate(u.angle);
-
-  ctx.fillStyle = u===selected?"#00ffff":"#00ff88";
-  ctx.fillRect(-u.size/2, -u.size/2, u.size, u.size);
-
-  ctx.fillStyle = "#003322";
-  ctx.fillRect(-u.size/2 - 4, -u.size/2 + 4, 4, u.size-8);
-  ctx.fillRect(u.size/2, -u.size/2 + 4, 4, u.size-8);
-
-  ctx.fillStyle = "#00aa66";
-  ctx.beginPath();
-  ctx.arc(0, 0, u.size/4, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.strokeStyle = "#00ff88";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(0, -u.size/1.2);
-  ctx.stroke();
-
-  ctx.restore();
-
-  ctx.fillStyle="#ff0000";
-  ctx.fillRect(u.x, u.y-6, u.size*(u.hp/100), 4);
-}
-
-function drawEnemyBot(e) {
-  ctx.fillStyle="#660000";
-  ctx.fillRect(e.x, e.y, e.size, e.size);
-
-  ctx.fillStyle="#ff0033";
-  ctx.beginPath();
-  ctx.arc(e.x + e.size/2, e.y + e.size/2, e.size/4, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle="#00ff00";
-  ctx.fillRect(e.x, e.y-6, e.size*(e.hp/120), 4);
-}
-
-function update() {
-  units.forEach(u=>{
-    if(u.targetX!==null){
-      let dx=u.targetX-u.x;
-      let dy=u.targetY-u.y;
-      let dist=Math.hypot(dx,dy);
-      if(dist>2){
-        let vx = dx/dist*1.8;
-        let vy = dy/dist*1.8;
-        u.x+=vx;
-        u.y+=vy;
-        u.angle = Math.atan2(vy, vx) + Math.PI/2;
-      }
-    }
-
-    enemies.forEach(e=>{
-      if(Math.hypot(u.x-e.x,u.y-e.y)<35){
-        e.hp-=0.4;
-        u.hp-=0.15;
-      }
+// ===== Game Logic =====
+function updateDisplay(){
+    tiberiumDisplay.textContent = Math.floor(gameData.tiberium);
+    clickPowerDisplay.textContent = gameData.clickPower;
+    let totalTPS=0;
+    buildingTypes.forEach(b=>{
+        totalTPS += (gameData.buildings[b.name].count * b.tps);
+        let div=document.getElementById('building-'+b.name);
+        div.querySelector('.count').textContent=gameData.buildings[b.name].count;
+        div.querySelector('.cost').textContent=Math.floor(gameData.buildings[b.name].cost);
     });
-  });
-
-  enemies = enemies.filter(e=>e.hp>0);
-  units = units.filter(u=>u.hp>0);
+    tpsDisplay.textContent=totalTPS;
 }
 
-canvas.addEventListener("click", e=>{
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  selected = null;
-  units.forEach(u=>{
-    if(x>=u.x && x<=u.x+u.size && y>=u.y && y<=u.y+u.size){
-      selected=u;
+function buyBuilding(name){
+    let b = buildingTypes.find(x=>x.name===name);
+    if(gameData.tiberium>=gameData.buildings[name].cost){
+        gameData.tiberium -= gameData.buildings[name].cost;
+        gameData.buildings[name].count++;
+        gameData.buildings[name].cost = Math.floor(gameData.buildings[name].cost * 1.15);
+        updateDisplay();
+        saveGame();
     }
-  });
-});
-
-canvas.addEventListener("contextmenu", e=>{
-  e.preventDefault();
-  if(selected){
-    const rect = canvas.getBoundingClientRect();
-    selected.targetX = e.clientX - rect.left;
-    selected.targetY = e.clientY - rect.top;
-  }
-});
-
-function gameLoop(){
-  drawMap();
-  update();
-  units.forEach(drawTankUnit);
-  enemies.forEach(drawEnemyBot);
-  requestAnimationFrame(gameLoop);
 }
 
-// Init
-generateMap();
-spawnUnit();
-spawnEnemy();
-setInterval(spawnEnemy,3000);
-gameLoop();
+function buyUpgrade(name){
+    let u = upgradeTypes.find(x=>x.name===name);
+    if(gameData.tiberium>=u.cost && !gameData.upgrades[name].owned){
+        gameData.tiberium -= u.cost;
+        gameData.upgrades[name].owned=true;
+        if(u.effect==='clickPower') gameData.clickPower *= u.multiplier;
+        else gameData.buildings[u.effect].count *= u.multiplier;
+        document.getElementById('upgrade-'+name).style.display='none';
+        updateDisplay();
+        saveGame();
+    }
+}
+
+document.getElementById('clickButton').addEventListener('click',()=>{
+    gameData.tiberium += gameData.clickPower;
+    updateDisplay();
+    saveGame();
+});
+
+// Auto-generate Tiberium
+setInterval(()=>{
+    buildingTypes.forEach(b=>{
+        gameData.tiberium += gameData.buildings[b.name].count * b.tps;
+    });
+    updateDisplay();
+    saveGame();
+},1000);
+
+// Golden Tiberium Event
+setInterval(()=>{
+    if(Math.random()<0.01 && !gameData.goldenTiberiumActive){
+        gameData.goldenTiberiumActive=true;
+        alert('Golden Tiberium appeared! Click Harvest quickly for bonus!');
+        setTimeout(()=>{gameData.goldenTiberiumActive=false;},5000);
+    }
+},1000);
+
+function saveGame(){
+    localStorage.setItem('tiberiumClicker', JSON.stringify(gameData));
+}
+
+updateDisplay();
 </script>
 
 </body>
 </html>
-
