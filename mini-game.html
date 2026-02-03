@@ -1,1 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiberium RTS Prototype</title>
+<style>
+body { margin:0; background:#000; overflow:hidden; font-family:Arial; }
+#ui { position:absolute; top:10px; left:10px; color:#00ff88; z-index:10; }
+canvas { display:block; }
+button { background:#003322; color:#00ff88; border:1px solid #00ff88; padding:6px; margin-top:5px; }
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <div>Units: <span id="unitCount">0</span></div>
+  <button onclick="spawnUnit()">Deploy Crawler Tank</button>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// ===== Tile Map System =====
+const TILE_SIZE = 40;
+const MAP_COLS = Math.ceil(canvas.width / TILE_SIZE);
+const MAP_ROWS = Math.ceil(canvas.height / TILE_SIZE);
+
+// 0 = dirt, 1 = grass, 2 = tiberium field, 3 = rock
+let map = [];
+
+function generateMap() {
+  for (let y = 0; y < MAP_ROWS; y++) {
+    let row = [];
+    for (let x = 0; x < MAP_COLS; x++) {
+      let rand = Math.random();
+      if (rand < 0.1) row.push(2);          // Tiberium
+      else if (rand < 0.15) row.push(3);    // Rock
+      else if (rand < 0.6) row.push(1);     // Grass
+      else row.push(0);                     // Dirt
+    }
+    map.push(row);
+  }
+}
+
+function drawTile(x, y, type) {
+  const px = x * TILE_SIZE;
+  const py = y * TILE_SIZE;
+
+  if (type === 0) {
+    ctx.fillStyle = "#3b2f1f"; // dirt
+    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+  }
+
+  if (type === 1) {
+    ctx.fillStyle = "#1e3d1e"; // grass
+    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+  }
+
+  if (type === 2) {
+    ctx.fillStyle = "#1e3d1e";
+    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+    // Crystal cluster
+    ctx.fillStyle = "#00ff88";
+    ctx.beginPath();
+    ctx.moveTo(px + TILE_SIZE/2, py + 8);
+    ctx.lineTo(px + TILE_SIZE/2 + 6, py + 20);
+    ctx.lineTo(px + TILE_SIZE/2 - 6, py + 20);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(0,255,150,0.4)";
+    ctx.beginPath();
+    ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 10, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  if (type === 3) {
+    ctx.fillStyle = "#2a2a2a";
+    ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+    ctx.fillStyle = "#555";
+    ctx.beginPath();
+    ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 10, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawMap() {
+  for (let y = 0; y < MAP_ROWS; y++) {
+    for (let x = 0; x < MAP_COLS; x++) {
+      drawTile(x, y, map[y][x]);
+    }
+  }
+}
+
+// ===== Units =====
+let units = [];
+let enemies = [];
+let selected = null;
+
+function spawnUnit() {
+  units.push({
+    x: 120,
+    y: 120,
+    size: 26,
+    targetX: null,
+    targetY: null,
+    hp: 100,
+    angle: 0
+  });
+  document.getElementById("unitCount").innerText = units.length;
+}
+
+function spawnEnemy() {
+  enemies.push({
+    x: canvas.width - 200,
+    y: 200,
+    size: 28,
+    hp: 120
+  });
+}
+
+function drawTankUnit(u) {
+  ctx.save();
+  ctx.translate(u.x + u.size/2, u.y + u.size/2);
+  ctx.rotate(u.angle);
+
+  ctx.fillStyle = u===selected?"#00ffff":"#00ff88";
+  ctx.fillRect(-u.size/2, -u.size/2, u.size, u.size);
+
+  ctx.fillStyle = "#003322";
+  ctx.fillRect(-u.size/2 - 4, -u.size/2 + 4, 4, u.size-8);
+  ctx.fillRect(u.size/2, -u.size/2 + 4, 4, u.size-8);
+
+  ctx.fillStyle = "#00aa66";
+  ctx.beginPath();
+  ctx.arc(0, 0, u.size/4, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle = "#00ff88";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, -u.size/1.2);
+  ctx.stroke();
+
+  ctx.restore();
+
+  ctx.fillStyle="#ff0000";
+  ctx.fillRect(u.x, u.y-6, u.size*(u.hp/100), 4);
+}
+
+function drawEnemyBot(e) {
+  ctx.fillStyle="#660000";
+  ctx.fillRect(e.x, e.y, e.size, e.size);
+
+  ctx.fillStyle="#ff0033";
+  ctx.beginPath();
+  ctx.arc(e.x + e.size/2, e.y + e.size/2, e.size/4, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#00ff00";
+  ctx.fillRect(e.x, e.y-6, e.size*(e.hp/120), 4);
+}
+
+function update() {
+  units.forEach(u=>{
+    if(u.targetX!==null){
+      let dx=u.targetX-u.x;
+      let dy=u.targetY-u.y;
+      let dist=Math.hypot(dx,dy);
+      if(dist>2){
+        let vx = dx/dist*1.8;
+        let vy = dy/dist*1.8;
+        u.x+=vx;
+        u.y+=vy;
+        u.angle = Math.atan2(vy, vx) + Math.PI/2;
+      }
+    }
+
+    enemies.forEach(e=>{
+      if(Math.hypot(u.x-e.x,u.y-e.y)<35){
+        e.hp-=0.4;
+        u.hp-=0.15;
+      }
+    });
+  });
+
+  enemies = enemies.filter(e=>e.hp>0);
+  units = units.filter(u=>u.hp>0);
+}
+
+canvas.addEventListener("click", e=>{
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  selected = null;
+  units.forEach(u=>{
+    if(x>=u.x && x<=u.x+u.size && y>=u.y && y<=u.y+u.size){
+      selected=u;
+    }
+  });
+});
+
+canvas.addEventListener("contextmenu", e=>{
+  e.preventDefault();
+  if(selected){
+    const rect = canvas.getBoundingClientRect();
+    selected.targetX = e.clientX - rect.left;
+    selected.targetY = e.clientY - rect.top;
+  }
+});
+
+function gameLoop(){
+  drawMap();
+  update();
+  units.forEach(drawTankUnit);
+  enemies.forEach(drawEnemyBot);
+  requestAnimationFrame(gameLoop);
+}
+
+// Init
+generateMap();
+spawnUnit();
+spawnEnemy();
+setInterval(spawnEnemy,3000);
+gameLoop();
+</script>
+
+</body>
+</html>
 
