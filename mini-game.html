@@ -5,146 +5,176 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tiberium Clicker</title>
 <style>
-body { margin:0; background:#111; color:#0f0; font-family:Arial, sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:20px; }
-button { font-size:16px; padding:10px; margin:5px; background:#222; color:#0f0; border:2px solid #0f0; cursor:pointer; }
-#stats { margin-top:10px; }
-#buildings { margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; }
-.building { border:1px solid #0f0; padding:10px; margin:5px; }
-.upgrades { margin-top:20px; }
+body { margin:0; background:#111; color:#0f0; font-family:Arial; text-align:center; }
+button { margin:5px; padding:8px; background:#222; color:#0f0; border:1px solid #0f0; cursor:pointer; }
+.section { margin-top:20px; }
 </style>
 </head>
 <body>
 
 <h1>Tiberium Clicker</h1>
-<button id="clickButton">Harvest Tiberium (+<span id="clickPower">1</span>)</button>
-<div id="stats">
-  <div>Tiberium: <span id="tiberium">0</span></div>
-  <div>TPS: <span id="tps">0</span></div>
-</div>
+<button onclick="clickTiberium()">Harvest (+<span id='clickPower'>1</span>)</button>
+<div>Tiberium: <span id="tiberium">0</span></div>
+<div>TPS: <span id="tps">0</span></div>
+<div>Prestige Crystals: <span id="prestige">0</span></div>
+<button onclick="prestigeReset()">Prestige Reset</button>
+
+<div class="section">
+<h2>Buildings</h2>
 <div id="buildings"></div>
-<div class="upgrades" id="upgrades"></div>
+</div>
+
+<div class="section">
+<h2>Upgrades</h2>
+<div id="upgrades"></div>
+</div>
+
+<div class="section">
+<h2>Achievements</h2>
+<div id="achievements"></div>
+</div>
+
+<div class="section">
+<h2>Stats</h2>
+<div>Total Clicks: <span id="totalClicks">0</span></div>
+<div>Total Earned: <span id="totalEarned">0</span></div>
+</div>
 
 <script>
-// ===== Game State =====
-let gameData = {
-    tiberium: 0,
-    clickPower: 1,
-    buildings: {},
-    upgrades: {},
-    goldenTiberiumActive: false
+let game={
+ tiberium:0,
+ totalEarned:0,
+ totalClicks:0,
+ clickPower:1,
+ prestige:0,
+ buildings:{},
+ upgrades:{},
+ achievements:{}
 };
 
-const buildingTypes = [
-    {name:'Harvester', baseCost:10, tps:1},
-    {name:'Refinery', baseCost:100, tps:10},
-    {name:'Lab', baseCost:1000, tps:80},
-    {name:'Crystal', baseCost:10000, tps:470}
+const buildingTypes=[
+ {name:'Harvester',base:10,tps:1},
+ {name:'Refinery',base:100,tps:8},
+ {name:'Lab',base:1000,tps:47},
+ {name:'Crystal Mine',base:10000,tps:260}
 ];
 
-const upgradeTypes = [
-    {name:'Click Booster', cost:50, effect:'clickPower', multiplier:2, unlocked:false},
-    {name:'Harvester Efficiency', cost:500, effect:'Harvester', multiplier:2, unlocked:false}
+const upgradeTypes=[
+ {name:'Double Click',cost:100,type:'click',multi:2},
+ {name:'Harvester Boost',cost:500,type:'Harvester',multi:2},
+ {name:'Refinery Boost',cost:2000,type:'Refinery',multi:2}
 ];
 
-// Load saved game
-if(localStorage.getItem('tiberiumClicker')){
-    gameData = JSON.parse(localStorage.getItem('tiberiumClicker'));
-}
+const achievementTypes=[
+ {name:'First Click',condition:()=>game.totalClicks>=1},
+ {name:'100 Tiberium',condition:()=>game.totalEarned>=100},
+ {name:'1000 Tiberium',condition:()=>game.totalEarned>=1000}
+];
 
-// ===== UI Setup =====
-const tiberiumDisplay = document.getElementById('tiberium');
-const tpsDisplay = document.getElementById('tps');
-const clickPowerDisplay = document.getElementById('clickPower');
-const buildingsDiv = document.getElementById('buildings');
-const upgradesDiv = document.getElementById('upgrades');
+// Load
+if(localStorage.getItem('tibSave')) game=JSON.parse(localStorage.getItem('tibSave'));
 
-// Initialize buildings
+// Init buildings
 buildingTypes.forEach(b=>{
-    if(!gameData.buildings[b.name]) gameData.buildings[b.name]={count:0,cost:b.baseCost};
-    let div = document.createElement('div');
-    div.className='building';
-    div.id='building-'+b.name;
-    div.innerHTML=`<strong>${b.name}</strong><br>Owned: <span class='count'>${gameData.buildings[b.name].count}</span><br>Cost: <span class='cost'>${gameData.buildings[b.name].cost}</span><br><button onclick='buyBuilding("${b.name}")'>Buy</button>`;
-    buildingsDiv.appendChild(div);
+ if(!game.buildings[b.name]) game.buildings[b.name]={count:0,cost:b.base};
+ let div=document.createElement('div');
+ div.id='b-'+b.name;
+ div.innerHTML=`${b.name} | Owned: <span class='count'></span> | Cost: <span class='cost'></span> <button onclick="buyBuilding('${b.name}')">Buy</button>`;
+ document.getElementById('buildings').appendChild(div);
 });
 
-// Initialize upgrades
+// Init upgrades
 upgradeTypes.forEach(u=>{
-    if(!gameData.upgrades[u.name]) gameData.upgrades[u.name]={owned:false};
-    let div = document.createElement('div');
-    div.className='building';
-    div.id='upgrade-'+u.name;
-    div.innerHTML=`<strong>${u.name}</strong><br>Cost: ${u.cost}<br><button onclick='buyUpgrade("${u.name}")'>Buy</button>`;
-    upgradesDiv.appendChild(div);
+ if(!game.upgrades[u.name]) game.upgrades[u.name]=false;
+ let div=document.createElement('div');
+ div.id='u-'+u.name;
+ div.innerHTML=`${u.name} (${u.cost}) <button onclick="buyUpgrade('${u.name}')">Buy</button>`;
+ document.getElementById('upgrades').appendChild(div);
 });
 
-// ===== Game Logic =====
-function updateDisplay(){
-    tiberiumDisplay.textContent = Math.floor(gameData.tiberium);
-    clickPowerDisplay.textContent = gameData.clickPower;
-    let totalTPS=0;
-    buildingTypes.forEach(b=>{
-        totalTPS += (gameData.buildings[b.name].count * b.tps);
-        let div=document.getElementById('building-'+b.name);
-        div.querySelector('.count').textContent=gameData.buildings[b.name].count;
-        div.querySelector('.cost').textContent=Math.floor(gameData.buildings[b.name].cost);
-    });
-    tpsDisplay.textContent=totalTPS;
+// Init achievements
+achievementTypes.forEach(a=>{
+ if(!game.achievements[a.name]) game.achievements[a.name]=false;
+ let div=document.createElement('div');
+ div.id='a-'+a.name;
+ div.innerHTML=`${a.name}`;
+ document.getElementById('achievements').appendChild(div);
+});
+
+function clickTiberium(){
+ let gain=game.clickPower*(1+game.prestige*0.1);
+ game.tiberium+=gain;
+ game.totalEarned+=gain;
+ game.totalClicks++;
+ update(); save();
 }
 
 function buyBuilding(name){
-    let b = buildingTypes.find(x=>x.name===name);
-    if(gameData.tiberium>=gameData.buildings[name].cost){
-        gameData.tiberium -= gameData.buildings[name].cost;
-        gameData.buildings[name].count++;
-        gameData.buildings[name].cost = Math.floor(gameData.buildings[name].cost * 1.15);
-        updateDisplay();
-        saveGame();
-    }
+ let b=game.buildings[name];
+ if(game.tiberium>=b.cost){
+  game.tiberium-=b.cost;
+  b.count++;
+  b.cost=Math.floor(b.cost*1.15);
+  update(); save();
+ }
 }
 
 function buyUpgrade(name){
-    let u = upgradeTypes.find(x=>x.name===name);
-    if(gameData.tiberium>=u.cost && !gameData.upgrades[name].owned){
-        gameData.tiberium -= u.cost;
-        gameData.upgrades[name].owned=true;
-        if(u.effect==='clickPower') gameData.clickPower *= u.multiplier;
-        else gameData.buildings[u.effect].count *= u.multiplier;
-        document.getElementById('upgrade-'+name).style.display='none';
-        updateDisplay();
-        saveGame();
-    }
+ let u=upgradeTypes.find(x=>x.name===name);
+ if(game.tiberium>=u.cost && !game.upgrades[name]){
+  game.tiberium-=u.cost;
+  game.upgrades[name]=true;
+  if(u.type==='click') game.clickPower*=u.multi;
+  else game.buildings[u.type].count*=u.multi;
+  document.getElementById('u-'+name).style.display='none';
+  update(); save();
+ }
 }
 
-document.getElementById('clickButton').addEventListener('click',()=>{
-    gameData.tiberium += gameData.clickPower;
-    updateDisplay();
-    saveGame();
-});
-
-// Auto-generate Tiberium
-setInterval(()=>{
-    buildingTypes.forEach(b=>{
-        gameData.tiberium += gameData.buildings[b.name].count * b.tps;
-    });
-    updateDisplay();
-    saveGame();
-},1000);
-
-// Golden Tiberium Event
-setInterval(()=>{
-    if(Math.random()<0.01 && !gameData.goldenTiberiumActive){
-        gameData.goldenTiberiumActive=true;
-        alert('Golden Tiberium appeared! Click Harvest quickly for bonus!');
-        setTimeout(()=>{gameData.goldenTiberiumActive=false;},5000);
-    }
-},1000);
-
-function saveGame(){
-    localStorage.setItem('tiberiumClicker', JSON.stringify(gameData));
+function prestigeReset(){
+ let crystals=Math.floor(game.totalEarned/10000);
+ if(crystals>0){
+  game={tiberium:0,totalEarned:0,totalClicks:0,clickPower:1,prestige:game.prestige+crystals,buildings:{},upgrades:{},achievements:{}};
+  localStorage.removeItem('tibSave');
+  location.reload();
+ }
 }
 
-updateDisplay();
+function update(){
+ document.getElementById('tiberium').textContent=Math.floor(game.tiberium);
+ document.getElementById('clickPower').textContent=game.clickPower;
+ document.getElementById('totalClicks').textContent=game.totalClicks;
+ document.getElementById('totalEarned').textContent=Math.floor(game.totalEarned);
+ document.getElementById('prestige').textContent=game.prestige;
+
+ let totalTPS=0;
+ buildingTypes.forEach(b=>{
+  totalTPS+=b.tps*game.buildings[b.name].count*(1+game.prestige*0.1);
+  let div=document.getElementById('b-'+b.name);
+  div.querySelector('.count').textContent=game.buildings[b.name].count;
+  div.querySelector('.cost').textContent=game.buildings[b.name].cost;
+ });
+ document.getElementById('tps').textContent=Math.floor(totalTPS);
+
+ achievementTypes.forEach(a=>{
+  if(!game.achievements[a.name] && a.condition()){
+   game.achievements[a.name]=true;
+   document.getElementById('a-'+a.name).style.color='#0ff';
+  }
+ });
+}
+
+setInterval(()=>{
+ buildingTypes.forEach(b=>{
+  game.tiberium+=b.tps*game.buildings[b.name].count*(1+game.prestige*0.1);
+  game.totalEarned+=b.tps*game.buildings[b.name].count;
+ });
+ update(); save();
+},1000);
+
+function save(){ localStorage.setItem('tibSave',JSON.stringify(game)); }
+
+update();
 </script>
 
 </body>
