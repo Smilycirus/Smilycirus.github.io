@@ -64,6 +64,44 @@ h1 {
   box-shadow: 0 10px 30px rgba(0,0,0,0.28);
 }
 
+.howto-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(4, 8, 5, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.howto-panel {
+  width: min(100%, 640px);
+}
+
+.howto-title {
+  margin: 0 0 0.55rem;
+  color: var(--accent);
+}
+
+.howto-modal p,
+.howto-modal li {
+  color: #cce7cc;
+}
+
+.howto-modal ul {
+  margin: 0.65rem 0 1rem;
+  padding-left: 1.2rem;
+}
+
+.howto-close {
+  min-width: 180px;
+}
+
+.hidden {
+  display: none;
+}
+
 .auth-panel { margin-bottom: 1rem; }
 .auth-title {
   margin: 0 0 0.35rem;
@@ -187,6 +225,13 @@ button:disabled {
 
 .row-item span { color: #d0e8d0; }
 
+.lock-note {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #f0c68f;
+}
+
 .achievement-earned {
   border-color: #226f58;
   background: #0b1715;
@@ -205,6 +250,21 @@ button:disabled {
 </style>
 </head>
 <body>
+  <div class="howto-modal" id="howtoModal" role="dialog" aria-modal="true" aria-labelledby="howtoTitle">
+    <div class="panel howto-panel">
+      <h2 class="howto-title" id="howtoTitle">How to play Tiberium Clicker</h2>
+      <p>Harvest Tiberium, buy buildings for passive income, and unlock upgrades to scale faster.</p>
+      <ul>
+        <li>Click <strong>Harvest</strong> for instant Tiberium gains.</li>
+        <li>Spend Tiberium on <strong>Buildings</strong> to increase TPS (income per second).</li>
+        <li>Unlock <strong>Upgrades</strong> as you own more buildings and hit milestones.</li>
+        <li>Complete <strong>Achievements</strong> to earn reward bonuses.</li>
+      </ul>
+      <p><strong>Prestige requirement:</strong> You earn Prestige Crystals when using Prestige Reset. Crystals gained = <code>floor(total earned ÷ 10,000)</code>. You need to have earned at least <strong>10,000 total Tiberium</strong> for your first crystal.</p>
+      <button class="primary howto-close" onclick="closeHowToModal()">Got it, let me play</button>
+    </div>
+  </div>
+
   <div class="wrap">
     <div class="top">
       <a class="back-link" href="index.html">← Back to Home</a>
@@ -322,19 +382,32 @@ const buildingTypes = [
   { name: 'Harvester', base: 10, tps: 1 },
   { name: 'Refinery', base: 100, tps: 8 },
   { name: 'Lab', base: 1000, tps: 47 },
-  { name: 'Crystal Mine', base: 10000, tps: 260 }
+  { name: 'Crystal Mine', base: 10000, tps: 260 },
+  { name: 'Temple Reactor', base: 70000, tps: 1450 },
+  { name: 'Tiberium Rig', base: 350000, tps: 7800 }
 ];
 
 const upgradeTypes = [
   { name: 'Double Click', cost: 100, type: 'click', multi: 2 },
   { name: 'Harvester Boost', cost: 500, type: 'Harvester', multi: 2 },
-  { name: 'Refinery Boost', cost: 2000, type: 'Refinery', multi: 2 }
+  { name: 'Refinery Boost', cost: 2000, type: 'Refinery', multi: 2, unlock: { building: 'Harvester', count: 10 } },
+  { name: 'Lab Automation', cost: 12000, type: 'Lab', multi: 2, unlock: { building: 'Refinery', count: 5 } },
+  { name: 'Crystal Compression', cost: 60000, type: 'Crystal Mine', multi: 2, unlock: { building: 'Lab', count: 6 } },
+  { name: 'Temple Overclock', cost: 175000, type: 'Temple Reactor', multi: 2, unlock: { building: 'Crystal Mine', count: 4 } },
+  { name: 'Global Logistics', cost: 520000, type: 'all', multi: 1.25, unlock: { building: 'Temple Reactor', count: 3 } },
+  { name: 'Rig Swarm Protocol', cost: 1500000, type: 'Tiberium Rig', multi: 2, unlock: { building: 'Temple Reactor', count: 8 } }
 ];
 
 const achievementTypes = [
-  { name: 'First Click', condition: () => game.totalClicks >= 1 },
-  { name: '100 Tiberium', condition: () => game.totalEarned >= 100 },
-  { name: '1000 Tiberium', condition: () => game.totalEarned >= 1000 }
+  { name: 'First Click', description: 'Perform your first harvest.', condition: () => game.totalClicks >= 1, reward: { type: 'tiberium', value: 25 } },
+  { name: 'Field Technician', description: 'Own 10 Harvesters.', condition: () => game.buildings.Harvester?.count >= 10, reward: { type: 'buildingBoost', building: 'Harvester', value: 1.25 } },
+  { name: '100 Tiberium', description: 'Earn 100 total Tiberium.', condition: () => game.totalEarned >= 100, reward: { type: 'clickPower', value: 1 } },
+  { name: '1000 Tiberium', description: 'Earn 1,000 total Tiberium.', condition: () => game.totalEarned >= 1000, reward: { type: 'tiberium', value: 250 } },
+  { name: 'Industrial Core', description: 'Own 5 Refineries and 3 Labs.', condition: () => game.buildings.Refinery?.count >= 5 && game.buildings.Lab?.count >= 3, reward: { type: 'buildingBoost', building: 'Refinery', value: 1.2 } },
+  { name: 'Crystal Engineer', description: 'Own 5 Crystal Mines.', condition: () => game.buildings['Crystal Mine']?.count >= 5, reward: { type: 'buildingBoost', building: 'Crystal Mine', value: 1.25 } },
+  { name: 'Prestige Initiate', description: 'Reach 1 Prestige Crystal.', condition: () => game.prestige >= 1, reward: { type: 'clickPower', value: 3 } },
+  { name: 'War Economy', description: 'Reach 1,000 TPS.', condition: () => getTotalTps() >= 1000, reward: { type: 'allBuildingBoost', value: 1.1 } },
+  { name: 'Tiberium Baron', description: 'Earn 1,000,000 total Tiberium.', condition: () => game.totalEarned >= 1000000, reward: { type: 'tiberium', value: 150000 } }
 ];
 
 function ensureGameModel() {
@@ -373,7 +446,7 @@ function wireRows() {
     const div = document.createElement('div');
     div.id = `u-${upgrade.name}`;
     div.className = 'row-item';
-    div.innerHTML = `<span>${upgrade.name} (<strong>${numberFormatter.format(upgrade.cost)}</strong>)</span><button onclick="buyUpgrade('${upgrade.name}')">Buy</button>`;
+    div.innerHTML = `<span>${upgrade.name} (<strong>${numberFormatter.format(upgrade.cost)}</strong>)<small class="lock-note"></small></span><button onclick="buyUpgrade('${upgrade.name}')">Buy</button>`;
     document.getElementById('upgrades').appendChild(div);
   });
 
@@ -381,9 +454,50 @@ function wireRows() {
     const div = document.createElement('div');
     div.id = `a-${achievement.name}`;
     div.className = 'row-item';
-    div.innerHTML = `<span>${achievement.name}</span>`;
+    div.innerHTML = `<span>${achievement.name}<br><small>${achievement.description}</small></span>`;
     document.getElementById('achievements').appendChild(div);
   });
+}
+
+function getTotalTps() {
+  return buildingTypes.reduce((total, building) => total + getBuildingTps(building.name), 0);
+}
+
+function describeUnlockRequirement(unlock) {
+  if (!unlock) return '';
+  return `Requires ${unlock.count} ${unlock.building}(s)`;
+}
+
+function upgradeUnlocked(upgrade) {
+  if (!upgrade.unlock) return true;
+  const owned = game.buildings[upgrade.unlock.building]?.count || 0;
+  return owned >= upgrade.unlock.count;
+}
+
+function applyAchievementReward(achievement) {
+  if (!achievement.reward) return;
+
+  switch (achievement.reward.type) {
+    case 'tiberium':
+      game.tiberium += achievement.reward.value;
+      game.totalEarned += achievement.reward.value;
+      break;
+    case 'clickPower':
+      game.clickPower += achievement.reward.value;
+      break;
+    case 'buildingBoost':
+      if (game.buildingMultipliers[achievement.reward.building]) {
+        game.buildingMultipliers[achievement.reward.building] *= achievement.reward.value;
+      }
+      break;
+    case 'allBuildingBoost':
+      buildingTypes.forEach((building) => {
+        game.buildingMultipliers[building.name] *= achievement.reward.value;
+      });
+      break;
+    default:
+      break;
+  }
 }
 
 function formatNum(value) {
@@ -512,12 +626,16 @@ window.buyUpgrade = function buyUpgrade(name) {
   if (!ensureLoggedIn()) return;
 
   const upgrade = upgradeTypes.find((item) => item.name === name);
-  if (upgrade && game.tiberium >= upgrade.cost && !game.upgrades[name]) {
+  if (upgrade && game.tiberium >= upgrade.cost && !game.upgrades[name] && upgradeUnlocked(upgrade)) {
     game.tiberium -= upgrade.cost;
     game.upgrades[name] = true;
 
     if (upgrade.type === 'click') {
       game.clickPower *= upgrade.multi;
+    } else if (upgrade.type === 'all') {
+      buildingTypes.forEach((building) => {
+        game.buildingMultipliers[building.name] *= upgrade.multi;
+      });
     } else {
       game.buildingMultipliers[upgrade.type] *= upgrade.multi;
     }
@@ -568,9 +686,7 @@ function update() {
   document.getElementById('totalEarned').textContent = formatNum(Math.floor(game.totalEarned));
   document.getElementById('prestige').textContent = formatNum(game.prestige);
 
-  let totalTPS = 0;
   buildingTypes.forEach((building) => {
-    totalTPS += getBuildingTps(building.name);
     const row = document.getElementById(`b-${building.name}`);
     const canAfford = game.tiberium >= game.buildings[building.name].cost;
     row.querySelector('.count').textContent = formatNum(game.buildings[building.name].count);
@@ -579,6 +695,7 @@ function update() {
     row.querySelector('button').disabled = !canAfford || !canPlay;
   });
 
+  const totalTPS = getTotalTps();
   document.getElementById('tps').textContent = formatNum(Math.floor(totalTPS));
 
   upgradeTypes.forEach((upgrade) => {
@@ -587,7 +704,10 @@ function update() {
       upgradeRow.style.display = 'none';
     } else {
       upgradeRow.style.display = 'flex';
-      upgradeRow.querySelector('button').disabled = game.tiberium < upgrade.cost || !canPlay;
+      const unlocked = upgradeUnlocked(upgrade);
+      const lockNote = upgradeRow.querySelector('.lock-note');
+      lockNote.textContent = unlocked ? '' : describeUnlockRequirement(upgrade.unlock);
+      upgradeRow.querySelector('button').disabled = game.tiberium < upgrade.cost || !canPlay || !unlocked;
     }
   });
 
@@ -599,13 +719,18 @@ function update() {
     const achievementRow = document.getElementById(`a-${achievement.name}`);
     if (!game.achievements[achievement.name] && achievement.condition()) {
       game.achievements[achievement.name] = true;
+      applyAchievementReward(achievement);
     }
     if (game.achievements[achievement.name]) {
       achievementRow.classList.add('achievement-earned');
-      achievementRow.innerHTML = `<span>✔ ${achievement.name}</span>`;
+      achievementRow.innerHTML = `<span>✔ ${achievement.name}<br><small>${achievement.description}</small></span>`;
     }
   });
 }
+
+window.closeHowToModal = function closeHowToModal() {
+  document.getElementById('howtoModal').classList.add('hidden');
+};
 
 setInterval(() => {
   if (!currentUid) return;
