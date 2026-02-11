@@ -1,13 +1,13 @@
 # SmilyCirus' Website
 
-This repository hosts the website for my YouTube channel **SmilyCirusPro**.  
+This repository hosts the website for my YouTube channel **Smilycirus Pro**.  
 The site focuses on **Command & Conquer: Tiberium Wars** campaign gameplay.
 
 ## Website
 [Visit live site](https://smilycirus.github.io)
 
 ## YouTube Channel
-[SmilyCirusPro](https://www.youtube.com/@smilyciruspro)
+[Smilycirus Pro](https://www.youtube.com/@smilyciruspro)
 
 ## Sections
 - Featured playlist
