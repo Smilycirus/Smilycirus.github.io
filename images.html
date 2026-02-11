@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Screenshot gallery for SmilyCirus Pro Command & Conquer: Tiberium Wars content.">
+  <title>Screenshots | SmilyCirus Pro</title>
+  <style>
+    :root {
+      --bg: #07080a;
+      --panel: #101712;
+      --text: #e8f7e8;
+      --muted: #a3b6a3;
+      --accent: #7cff7c;
+      --border: #203126;
+      --max-width: 1080px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #12151a 0%, var(--bg) 55%);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(100% - 2rem, var(--max-width));
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 7, 6, 0.88);
+      backdrop-filter: blur(8px);
+    }
+
+    .top-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 0.85rem;
+      color: var(--muted);
+      transition: all 0.2s ease;
+      font-size: 0.92rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      color: var(--text);
+      border-color: #406f4a;
+      background: rgba(124, 255, 124, 0.08);
+    }
+
+    header {
+      padding: 3.6rem 0 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--accent);
+      font-size: clamp(2rem, 3.2vw, 2.8rem);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 760px;
+      margin: 0.8rem auto 0;
+    }
+
+    .gallery {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      padding-bottom: 2rem;
+    }
+
+    figure {
+      margin: 0;
+      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      border-bottom: 1px solid #1e2f23;
+      background: #0c110d;
+    }
+
+    figcaption {
+      padding: 0.8rem 0.9rem 1rem;
+    }
+
+    figcaption h2 {
+      margin: 0;
+      font-size: 1rem;
+      color: #d6f7d6;
+    }
+
+    figcaption p {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .note {
+      margin-bottom: 2.2rem;
+      padding: 0.9rem 1rem;
+      background: rgba(12, 18, 13, 0.85);
+      border: 1px solid #2d4433;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+      padding: 1.2rem 0 1.7rem;
+      text-align: center;
+      color: #7d907d;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 620px) {
+      .top-nav .container {
+        flex-direction: column;
+      }
+
+      img {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav" aria-label="Main navigation">
+    <div class="container">
+      <a class="brand" href="index.html">SmilyCirus Pro</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="campaigns.html">Campaigns</a>
+        <a href="images.html" aria-current="page">Screenshots</a>
+        <a href="mini-game.html">Mini-game</a>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="container">
+      <h1>Tiberium Wars Screenshot Gallery</h1>
+      <p class="subtitle">
+        A quick gallery of Command &amp; Conquer visuals to highlight missions, battlefield moments,
+        and the look of each faction during the campaign run.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="gallery" aria-label="Screenshot gallery">
+      <figure>
+        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80" alt="Dark sci-fi control room with green holographic displays">
+        <figcaption>
+          <h2>Command Center View</h2>
+          <p>Planning phase before launching into the next operation.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?auto=format&fit=crop&w=1200&q=80" alt="Intense battlefield lighting over futuristic armored units">
+        <figcaption>
+          <h2>Frontline Engagement</h2>
+          <p>Mid-mission push with heavy armor and support units.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80" alt="Close-up view of a gaming setup with bright green lighting">
+        <figcaption>
+          <h2>Faction Intel Screen</h2>
+          <p>Loadout and strategy notes before mission objectives begin.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=1200&q=80" alt="Aerial-style shot of terrain and roads like a strategy map">
+        <figcaption>
+          <h2>Map Overview</h2>
+          <p>Terrain and route planning for faster objective control.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://images.unsplash.com/photo-1472457974886-0ebcd59440cc?auto=format&fit=crop&w=1200&q=80" alt="Neon green and blue night-time cityscape with futuristic look">
+        <figcaption>
+          <h2>Urban Combat Zone</h2>
+          <p>High-pressure urban mission with multiple attack lanes.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" alt="Code-like glowing symbols representing tactical data stream">
+        <figcaption>
+          <h2>Tactical Data Feed</h2>
+          <p>Live objective updates and enemy activity monitoring.</p>
+        </figcaption>
+      </figure>
+    </section>
+
+    <p class="note">
+      Want to be featured? Share your favorite campaign screenshot in the comments and include the mission name.
+    </p>
+  </main>
+
+  <footer>
+    © SmilyCirusPro 2026 · <a href="index.html">Back to Home</a>
+  </footer>
+</body>
+</html>
