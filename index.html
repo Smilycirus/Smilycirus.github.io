@@ -2,178 +2,339 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SmilyCirus Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="description" content="SmilyCirusPro - Command & Conquer: Tiberium Wars campaign gameplay, playlists, screenshots, and community links.">
+  <title>SmilyCirus Pro | Tiberium Wars Campaign</title>
   <style>
-  body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: radial-gradient(circle at top, #111318, #07080a);
-    color: #eaeaea;
-    text-align: center;
-}
+    :root {
+      --bg: #07080a;
+      --bg-soft: #0f1510;
+      --panel: #101712;
+      --text: #e8f7e8;
+      --muted: #a3b6a3;
+      --accent: #7cff7c;
+      --accent-2: #39b339;
+      --border: #203126;
+      --shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+      --max-width: 1080px;
+    }
 
-  header {
-    padding: 70px 20px;
-    border-bottom: 1px solid #1f2a1f;
-  }
+    * { box-sizing: border-box; }
 
-  h1 {
-    font-size: 2.6em;
-    margin-bottom: 10px;
-    color: #e6ffe6;
-  }
+    html, body { margin: 0; }
 
-  h2 {
-    color: #7CFF7C;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-  }
+    body {
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #12151a 0%, var(--bg) 55%);
+      line-height: 1.6;
+    }
 
-  p {
-    max-width: 720px;
-    margin: 0 auto 30px;
-    line-height: 1.7;
-    color: #bdbdbd;
-  }
+    a { color: inherit; }
 
-  .button {
-    display: inline-block;
-    padding: 14px 30px;
-    background: linear-gradient(135deg, #1faa1f, #0f6d0f);
-    color: #eaffea;
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: bold;
-    box-shadow: 0 0 15px rgba(124, 255, 124, 0.3);
-  }
+    .container {
+      width: min(100% - 2rem, var(--max-width));
+      margin: 0 auto;
+    }
 
-  section {
-    padding: 60px 20px;
-  }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 7, 6, 0.88);
+      backdrop-filter: blur(8px);
+    }
 
-  .video-box {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 16px;
-    background: linear-gradient(180deg, #0f1510, #080c08);
-    box-shadow: 0 0 30px rgba(124, 255, 124, 0.15);
-  }
+    .top-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      gap: 1rem;
+    }
 
-  iframe {
-    width: 100%;
-    height: 480px;
-    border-radius: 12px;
-    border: none;
-  }
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      text-decoration: none;
+    }
 
-  footer {
-    padding: 25px;
-    font-size: 0.85em;
-    color: #6f6f6f;
-    border-top: 1px solid #1f2a1f;
-  }
-    .future-games {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 30px;
-}
+    .nav-links {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
-.game-card {
-  background: linear-gradient(180deg, #0f1510, #080c08);
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(124, 255, 124, 0.1);
-  width: 220px;
-  text-align: center;
-  color: #bdbdbd;
-  font-weight: bold;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    .nav-links a {
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 0.85rem;
+      color: var(--muted);
+      transition: all 0.2s ease;
+      font-size: 0.92rem;
+    }
 
-.game-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 30px rgba(124, 255, 124, 0.3);
-}
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      color: var(--text);
+      border-color: #406f4a;
+      background: rgba(124, 255, 124, 0.08);
+    }
 
-</style>
+    header.hero {
+      padding: 4.5rem 0 3.5rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin: 0;
+      letter-spacing: 0.8px;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 1rem auto 0;
+      max-width: 760px;
+    }
+
+    .hero-actions {
+      margin-top: 1.6rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .button-primary {
+      color: #052605;
+      background: linear-gradient(120deg, var(--accent), #9dff9d);
+      box-shadow: 0 8px 20px rgba(124, 255, 124, 0.3);
+    }
+
+    .button-primary:hover { transform: translateY(-2px); }
+
+    .button-secondary {
+      color: var(--text);
+      border-color: #3b5940;
+      background: rgba(10, 18, 11, 0.65);
+    }
+
+    .button-secondary:hover {
+      background: rgba(30, 46, 33, 0.75);
+      transform: translateY(-2px);
+    }
+
+    section {
+      padding: 1.2rem 0 3rem;
+    }
+
+    .section-title {
+      margin: 0 0 1rem;
+      color: var(--accent);
+      text-align: center;
+      letter-spacing: 0.4px;
+    }
+
+    .panel {
+      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .video-box iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 12px;
+      background: #050607;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #0f1510, #090d09);
+      border: 1px solid #1b2a20;
+      border-radius: 12px;
+      padding: 1rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #3c6e45;
+    }
+
+    .card h3 {
+      margin: 0 0 0.45rem;
+      font-size: 1.03rem;
+      color: #d6f7d6;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .social-links {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .social-links a {
+      text-decoration: none;
+      font-size: 0.86rem;
+      border: 1px solid #2f4a35;
+      border-radius: 8px;
+      padding: 0.35rem 0.6rem;
+      color: #d9edd9;
+      background: #101811;
+    }
+
+    .about-text {
+      text-align: center;
+      margin: 0 auto;
+      max-width: 760px;
+      color: var(--muted);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+      padding: 1.4rem 0 2rem;
+      color: #7d907d;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    footer a {
+      color: #c9eec9;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(201, 238, 201, 0.5);
+    }
+
+    @media (max-width: 620px) {
+      .top-nav .container {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <nav class="top-nav" aria-label="Main navigation">
+    <div class="container">
+      <a class="brand" href="index.html">SmilyCirus Pro</a>
+      <div class="nav-links">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="campaigns.html">Campaigns</a>
+        <a href="images.html">Screenshots</a>
+        <a href="mini-game.html">Mini-game</a>
+      </div>
+    </div>
+  </nav>
 
-<header>
-  <h1>SmilyCirus Pro</h1>
-  <p>Command & Conquer: Tiberium Wars Campaign Gameplay</p>
-  <a class="button" href="https://www.youtube.com/@smilyciruspro" target="_blank">
-    Subscribe on YouTube
-  </a>
-</header>
-
-<section>
-  <h2>Tiberium Wars Campaign</h2>
-
-  <div class="video-box">
-    <iframe
-      src="https://www.youtube.com/embed/videoseries?list=PLvo3uUclPHrKJ8IZ0Nkvd1as_vDlD7aXX"
-      title="YouTube playlist player"
-      frameborder="0"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-  </div>
-</section>
+  <header class="hero">
+    <div class="container">
+      <h1>Command &amp; Conquer: Tiberium Wars Content</h1>
+      <p class="subtitle">
+        Campaign-focused gameplay, mission progression, and strategy with no filler.
+        Follow SmilyCirusPro for full playthroughs and future RTS content.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="https://www.youtube.com/@smilyciruspro" target="_blank" rel="noopener noreferrer">Subscribe on YouTube</a>
+        <a class="button button-secondary" href="mini-game.html">Play Tiberium Clicker</a>
+      </div>
+    </div>
+  </header>
 
   <section>
-  <h2>Friends & Channels</h2>
-
-  <div class="friends">
-    <div class="friend-card">
-      <p><strong>JTGN117</strong></p>
-      <a class="social-link" href="https://www.youtube.com/@jtgn1174" target="_blank">YouTube</a>
+    <div class="container">
+      <h2 class="section-title">Featured Playlist</h2>
+      <div class="video-box panel">
+        <iframe
+          src="https://www.youtube.com/embed/videoseries?list=PLvo3uUclPHrKJ8IZ0Nkvd1as_vDlD7aXX"
+          title="YouTube playlist player"
+          loading="lazy"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
-    
-    <div class="friend-card">
-      <p><strong>Vilefox</strong></p>
-      <a class="social-link" href="https://www.youtube.com/@Vilefox21" target="_blank">YouTube</a>
-      <a class="social-link" href="https://www.twitch.tv/Vilefox21" target="_blank">Twitch</a>
-    </div>
-  </div>
   </section>
 
-<section>
-  <h2>About</h2>
-  <p>
-    Campaign-focused gameplay of Command & Conquer: Tiberium Wars.
-    Full mission playthroughs, strategy, and progression — no filler.
-  </p>
-</section>
-<section>
-  <h2>Games to Play in the Future</h2>
+  <section>
+    <div class="container">
+      <h2 class="section-title">Friends &amp; Channels</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>JTGN117</h3>
+          <p>Strategy and gaming content.</p>
+          <div class="social-links">
+            <a href="https://www.youtube.com/@jtgn1174" target="_blank" rel="noopener noreferrer">YouTube</a>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Vilefox</h3>
+          <p>Gameplay streams and uploads.</p>
+          <div class="social-links">
+            <a href="https://www.youtube.com/@Vilefox21" target="_blank" rel="noopener noreferrer">YouTube</a>
+            <a href="https://www.twitch.tv/Vilefox21" target="_blank" rel="noopener noreferrer">Twitch</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-  <div class="future-games">
-    <div class="game-card">
-      <p>Other Command & Conquer Games</p>
+  <section>
+    <div class="container">
+      <h2 class="section-title">Games to Play in the Future</h2>
+      <div class="cards">
+        <article class="card"><h3>Other Command &amp; Conquer Games</h3><p>Campaigns and faction-focused runs.</p></article>
+        <article class="card"><h3>TerraTech</h3><p>Build and battle sessions.</p></article>
+        <article class="card"><h3>Halo Series</h3><p>Story-focused episodes.</p></article>
+        <article class="card"><h3>Tiberium Wars Mods</h3><p>Mod spotlights and custom playthroughs.</p></article>
+      </div>
     </div>
-    <div class="game-card">
-      <p>Terra Tech</p>
-    </div>
-    <div class="game-card">
-      <p>Halo Series</p>
-    </div>
-    <div class="game-card">
-      <p>Other Tiberium Wars Mods</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  © SmilyCirusPro 2026 | <a href="mini-game.html">Play Minigame</a>
-</footer>
+  <section>
+    <div class="container panel">
+      <h2 class="section-title">About the Channel</h2>
+      <p class="about-text">
+        SmilyCirusPro focuses on clean, complete mission gameplay for Command &amp; Conquer: Tiberium Wars.
+        The goal is simple: consistent campaign progression, strategy-focused episodes, and content you can watch from start to finish.
+      </p>
+    </div>
+  </section>
 
+  <footer>
+    © SmilyCirusPro 2026 · <a href="mini-game.html">Play Mini-game</a>
+  </footer>
 </body>
-  </html>
-  
+</html>
