@@ -138,6 +138,93 @@
       color: var(--muted);
     }
 
+
+
+    .submission-box {
+      margin: 0 0 2.2rem;
+      padding: 1rem;
+      border: 1px solid #2d4433;
+      border-radius: 14px;
+      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
+    }
+
+    .submission-box h2 {
+      margin: 0 0 0.4rem;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .submission-box p {
+      margin: 0 0 0.9rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .submit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .field label {
+      font-size: 0.86rem;
+      color: #d8f0d8;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #2b4631;
+      border-radius: 10px;
+      background: #0a110c;
+      color: var(--text);
+      padding: 0.62rem 0.72rem;
+      font-family: inherit;
+      font-size: 0.92rem;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .helper {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #a7c4a7;
+    }
+
+    .submission-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .submit-btn {
+      border: 1px solid #3b5940;
+      border-radius: 10px;
+      padding: 0.55rem 0.9rem;
+      font-weight: 700;
+      color: #d9edd9;
+      background: linear-gradient(120deg, #2f8e42, #246f34);
+      cursor: pointer;
+    }
+
+    .submit-status {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
     .note {
       margin-bottom: 2.2rem;
       padding: 0.9rem 1rem;
@@ -242,6 +329,37 @@
       </figure>
     </section>
 
+
+
+    <section class="submission-box" aria-label="Screenshot submission">
+      <h2>Submit Your Screenshot</h2>
+      <p>Send in your own campaign screenshot for a chance to be featured. Email is required. Message and attachments are optional. Submissions upload to Firebase Storage with entry details saved in Firestore.</p>
+      <form id="screenshotSubmissionForm" novalidate>
+        <div class="submit-grid">
+          <div class="field">
+            <label for="submitEmail">Email <span aria-hidden="true">*</span></label>
+            <input id="submitEmail" name="email" type="email" required placeholder="name@example.com" autocomplete="email">
+            <p class="helper">Required for submission updates.</p>
+          </div>
+          <div class="field">
+            <label for="submitAttachments">Attachments (optional)</label>
+            <input id="submitAttachments" name="attachments" type="file" accept="image/*" multiple>
+            <p class="helper">Optional: up to 3 image files, 5MB each.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="submitMessage">Message (optional)</label>
+          <textarea id="submitMessage" name="message" maxlength="500" placeholder="Mission name, context, or why this screenshot stands out..."></textarea>
+        </div>
+
+        <div class="submission-actions">
+          <button class="submit-btn" type="submit">Submit Screenshot</button>
+          <p class="submit-status" id="submitStatus" role="status" aria-live="polite">No submission yet.</p>
+        </div>
+      </form>
+    </section>
+
     <p class="note">
       Want to be featured? Share your favorite campaign screenshot in the comments and include the mission name.
     </p>
@@ -250,5 +368,104 @@
   <footer>
     © Smilycirus Pro 2026 · <a href="index.html">Back to Home</a>
   </footer>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
+    import { getFirestore, addDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyDC2abQAAaQSxYxZ7g3_OKqQqlqPHCPyu4',
+      authDomain: 'my-website-80cbb.firebaseapp.com',
+      projectId: 'my-website-80cbb',
+      storageBucket: 'my-website-80cbb.firebasestorage.app',
+      messagingSenderId: '781604542143',
+      appId: '1:781604542143:web:50a7bf43fe987a306a980a',
+      measurementId: 'G-8BXHP342KD'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const screenshotForm = document.getElementById('screenshotSubmissionForm');
+    const submitEmail = document.getElementById('submitEmail');
+    const submitMessage = document.getElementById('submitMessage');
+    const submitAttachments = document.getElementById('submitAttachments');
+    const submitStatus = document.getElementById('submitStatus');
+    const submitButton = screenshotForm.querySelector('button[type="submit"]');
+
+    function setStatus(message, color) {
+      submitStatus.textContent = message;
+      submitStatus.style.color = color;
+    }
+
+    screenshotForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!submitEmail.checkValidity()) {
+        setStatus('Please enter a valid email before submitting.', '#f6b287');
+        submitEmail.focus();
+        return;
+      }
+
+      const files = Array.from(submitAttachments.files || []);
+      const tooManyFiles = files.length > 3;
+      const oversizedFile = files.find((file) => file.size > 5 * 1024 * 1024);
+      const invalidType = files.find((file) => !file.type.startsWith('image/'));
+
+      if (tooManyFiles) {
+        setStatus('Please attach at most 3 files.', '#f6b287');
+        return;
+      }
+
+      if (oversizedFile) {
+        setStatus(`File "${oversizedFile.name}" is larger than 5MB.`, '#f6b287');
+        return;
+      }
+
+      if (invalidType) {
+        setStatus(`File "${invalidType.name}" is not an image.`, '#f6b287');
+        return;
+      }
+
+      submitButton.disabled = true;
+      setStatus('Uploading submission to Firebase…', '#9dd3ff');
+
+      try {
+        const uploadedFiles = [];
+        for (const file of files) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const filePath = `screenshot-submissions/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+          const fileRef = ref(storage, filePath);
+          await uploadBytes(fileRef, file);
+          const downloadUrl = await getDownloadURL(fileRef);
+          uploadedFiles.push({
+            name: file.name,
+            size: file.size,
+            contentType: file.type,
+            storagePath: filePath,
+            downloadUrl
+          });
+        }
+
+        await addDoc(collection(db, 'screenshotSubmissions'), {
+          email: submitEmail.value.trim(),
+          message: submitMessage.value.trim(),
+          attachments: uploadedFiles,
+          createdAt: serverTimestamp(),
+          sourcePage: 'images.html'
+        });
+
+        setStatus('Submitted successfully. Your entry is now stored in Firebase.', '#8ef3b0');
+        screenshotForm.reset();
+      } catch (error) {
+        console.error('Screenshot submission failed', error);
+        setStatus('Submission failed. Please try again in a moment.', '#f6b287');
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
