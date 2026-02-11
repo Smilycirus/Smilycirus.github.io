@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Campaign progress and mission roadmap for SmilyCirusPro Command & Conquer content.">
-  <title>Campaigns | SmilyCirus Pro</title>
+  <meta name="description" content="Screenshots and mission highlights from SmilyCirusPro Command & Conquer campaign runs.">
+  <title>Screenshots | SmilyCirus Pro</title>
   <style>
     :root {
       --bg: #07080a;
@@ -94,76 +94,65 @@
 
     .subtitle {
       color: var(--muted);
-      max-width: 740px;
+      max-width: 760px;
       margin: 0.8rem auto 0;
     }
 
-    .grid {
+    .gallery {
       display: grid;
-      gap: 1rem;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
       padding-bottom: 1rem;
     }
 
-    .card {
+    .shot {
       background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
       border: 1px solid var(--border);
       border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .shot-preview {
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(135deg, rgba(124, 255, 124, 0.09), rgba(124, 255, 124, 0.01)),
+        radial-gradient(circle at 20% 25%, #1b3522 0%, #0c120e 70%);
+      color: #b6dcb6;
+      border-bottom: 1px solid #223527;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-align: center;
       padding: 1rem;
     }
 
-    .card h2 {
+    .shot-body {
+      padding: 0.9rem;
+    }
+
+    .shot h2 {
       margin: 0 0 0.35rem;
-      font-size: 1.2rem;
+      font-size: 1.08rem;
+      color: #dff6df;
     }
 
-    .status {
-      display: inline-block;
-      margin-bottom: 0.6rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      border: 1px solid #35593f;
-      color: #b8e8b8;
-      background: rgba(124, 255, 124, 0.08);
-    }
-
-    ul {
+    .shot p {
       margin: 0;
-      padding-left: 1.1rem;
       color: var(--muted);
+      font-size: 0.95rem;
     }
 
-    .cta {
-      margin-top: 0.85rem;
-      display: inline-block;
-      text-decoration: none;
-      border: 1px solid #3b5940;
-      border-radius: 10px;
-      padding: 0.45rem 0.75rem;
-      color: #d9edd9;
-      font-size: 0.9rem;
-      background: rgba(10, 18, 11, 0.65);
-    }
-
-    .timeline {
+    .note {
       margin: 1rem 0 2.2rem;
-      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 1rem;
-    }
-
-    .timeline h2 {
-      margin-top: 0;
-      color: var(--accent);
-      font-size: 1.2rem;
-    }
-
-    .timeline p {
-      margin: 0.35rem 0;
       color: var(--muted);
+      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
     }
+
+    .note strong { color: #cfeecf; }
 
     footer {
       border-top: 1px solid var(--border);
@@ -175,9 +164,7 @@
     }
 
     @media (max-width: 620px) {
-      .top-nav .container {
-        flex-direction: column;
-      }
+      .top-nav .container { flex-direction: column; }
     }
   </style>
 </head>
@@ -187,8 +174,8 @@
       <a class="brand" href="index.html">SmilyCirus Pro</a>
       <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="campaigns.html" aria-current="page">Campaigns</a>
-        <a href="Screenshots.html">Screenshots</a>
+        <a href="campaigns.html">Campaigns</a>
+        <a href="Screenshots.html" aria-current="page">Screenshots</a>
         <a href="mini-game.html">Mini-game</a>
       </div>
     </div>
@@ -196,53 +183,44 @@
 
   <header>
     <div class="container">
-      <h1>Campaign Hub</h1>
+      <h1>Mission Screenshots</h1>
       <p class="subtitle">
-        Follow current and upcoming campaign runs. This page tracks what is live now,
-        what is in progress, and what is planned next on the channel.
+        Visual highlights from campaign missions, base builds, and battle moments.
+        Replace these placeholders with your own images as you add more episodes.
       </p>
     </div>
   </header>
 
   <main class="container">
-    <section class="grid" aria-label="Campaign list">
-      <article class="card">
-        <h2>Tiberium Wars - GDI Campaign</h2>
-        <span class="status">Active Series</span>
-        <ul>
-          <li>Mission-by-mission playthrough coverage.</li>
-          <li>Focus on clean clears and strategy commentary.</li>
-          <li>Playlist updated as new episodes release.</li>
-        </ul>
-        <a class="cta" href="https://www.youtube.com/playlist?list=PLvo3uUclPHrKJ8IZ0Nkvd1as_vDlD7aXX" target="_blank" rel="noopener noreferrer">Open Playlist</a>
+    <section class="gallery" aria-label="Screenshot gallery">
+      <article class="shot">
+        <div class="shot-preview">GDI Forward Base Setup</div>
+        <div class="shot-body">
+          <h2>Base Expansion</h2>
+          <p>Show key economy and defense setup before major mission waves.</p>
+        </div>
       </article>
 
-      <article class="card">
-        <h2>Tiberium Wars - Nod Campaign</h2>
-        <span class="status">Coming Soon</span>
-        <ul>
-          <li>Planned after current campaign milestones.</li>
-          <li>Will include alternate mission tactics.</li>
-          <li>Upload schedule announced on channel updates.</li>
-        </ul>
+      <article class="shot">
+        <div class="shot-preview">Convoy Escort Under Fire</div>
+        <div class="shot-body">
+          <h2>Mission Objective Push</h2>
+          <p>Highlight scripted mission moments and clutch objective clears.</p>
+        </div>
       </article>
 
-      <article class="card">
-        <h2>Kane's Wrath / Mods</h2>
-        <span class="status">Planned</span>
-        <ul>
-          <li>Expansion and mod spotlight sessions.</li>
-          <li>Community-requested scenarios.</li>
-          <li>Balance and unit-composition experiments.</li>
-        </ul>
+      <article class="shot">
+        <div class="shot-preview">Ion Cannon Strike</div>
+        <div class="shot-body">
+          <h2>Power Plays</h2>
+          <p>Capture support powers, superweapon moments, and final assaults.</p>
+        </div>
       </article>
     </section>
 
-    <section class="timeline" aria-label="Roadmap">
-      <h2>Roadmap</h2>
-      <p><strong>Now:</strong> Finish and polish current Tiberium Wars campaign uploads.</p>
-      <p><strong>Next:</strong> Launch Nod campaign arc with updated mission notes.</p>
-      <p><strong>Later:</strong> Add expansion/mod campaigns and challenge runs.</p>
+    <section class="note" aria-label="Upload tip">
+      <p><strong>Tip:</strong> When you are ready, replace each preview block with an actual image:</p>
+      <p>Use <code>&lt;img src="your-file.jpg" alt="description" loading="lazy"&gt;</code> inside each card's preview area.</p>
     </section>
   </main>
 
