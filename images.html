@@ -1,15 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Submission</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Screenshot gallery for Smilycirus Pro Command & Conquer: Tiberium Wars content.">
+  <title>Screenshots | Smilycirus Pro</title>
+  <style>
+    :root {
+      --bg: #07080a;
+      --panel: #101712;
+      --text: #e8f7e8;
+      --muted: #a3b6a3;
+      --accent: #7cff7c;
+      --border: #203126;
+      --max-width: 1080px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+
+    body {
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #12151a 0%, var(--bg) 55%);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(100% - 2rem, var(--max-width));
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 7, 6, 0.88);
+      backdrop-filter: blur(8px);
+    }
+
+    .top-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 0.85rem;
+      color: var(--muted);
+      transition: all 0.2s ease;
+      font-size: 0.92rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      color: var(--text);
+      border-color: #406f4a;
+      background: rgba(124, 255, 124, 0.08);
+    }
+
+    header {
+      padding: 3.6rem 0 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--accent);
+      font-size: clamp(2rem, 3.2vw, 2.8rem);
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 760px;
+      margin: 0.8rem auto 0;
+    }
+
+    .gallery {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      padding-bottom: 2rem;
+    }
+
+    figure {
+      margin: 0;
+      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      border-bottom: 1px solid #1e2f23;
+      background: #0c110d;
+    }
+
+    figcaption {
+      padding: 0.8rem 0.9rem 1rem;
+    }
+
+    figcaption h2 {
+      margin: 0;
+      font-size: 1rem;
+      color: #d6f7d6;
+    }
+
+    figcaption p {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .submission-box {
+      margin: 0 0 2.2rem;
+      padding: 1rem;
+      border: 1px solid #2d4433;
+      border-radius: 14px;
+      background: linear-gradient(170deg, rgba(20, 31, 23, 0.88), rgba(10, 15, 11, 0.9));
+    }
+
+    .submission-box h2 {
+      margin: 0 0 0.4rem;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .submission-box p {
+      margin: 0 0 0.9rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .submit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .field label {
+      font-size: 0.86rem;
+      color: #d8f0d8;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #2b4631;
+      border-radius: 10px;
+      background: #0a110c;
+      color: var(--text);
+      padding: 0.62rem 0.72rem;
+      font-family: inherit;
+      font-size: 0.92rem;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .helper {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #a7c4a7;
+    }
+
+    .submission-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .submit-btn {
+      border: 1px solid #3b5940;
+      border-radius: 10px;
+      padding: 0.55rem 0.9rem;
+      font-weight: 700;
+      color: #d9edd9;
+      background: linear-gradient(120deg, #2f8e42, #246f34);
+      cursor: pointer;
+    }
+
+    .submit-status {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .note {
+      margin-bottom: 2.2rem;
+      padding: 0.9rem 1rem;
+      background: rgba(12, 18, 13, 0.85);
+      border: 1px solid #2d4433;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+      padding: 1.2rem 0 1.7rem;
+      text-align: center;
+      color: #7d907d;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 620px) {
+      .top-nav .container {
+        flex-direction: column;
+      }
+
+      img {
+        height: 180px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Submit Your Image</h1>
-    <form id="imageForm" action="https://script.google.com/macros/s/AKfycbxWoGG2XY-dS0Oa4eXVHZJWEyR-S04btWPRIRT-u0pjaQobTSMEDYFwdK3pc80_9LZW/exec" method="POST">
-        <input type="file" name="image" accept="image/*" required>
-        <input type="submit" value="Submit">
-    </form>
+  <nav class="top-nav" aria-label="Main navigation">
+    <div class="container">
+      <a class="brand" href="index.html">Smilycirus Pro</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="campaigns.html">Campaigns</a>
+        <a href="images.html" aria-current="page">Screenshots</a>
+        <a href="mini-game.html">Mini-game</a>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="container">
+      <h1>Tiberium Wars Screenshot Gallery</h1>
+      <p class="subtitle">
+        A quick gallery of Command &amp; Conquer visuals to highlight missions, battlefield moments,
+        and the look of each faction during the campaign run.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="gallery" aria-label="Screenshot gallery">
+      <figure>
+        <img src="https://placehold.co/1200x675/0d1410/9cff9c?text=C%26C+Tiberium+Wars+-+GDI+Command+Center" alt="Command and Conquer Tiberium Wars GDI command center screenshot">
+        <figcaption>
+          <h2>Command Center View</h2>
+          <p>GDI command structure and base management before launching the mission.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://placehold.co/1200x675/121917/8dff8d?text=C%26C+Tiberium+Wars+-+Nod+Armor+Push" alt="Command and Conquer Tiberium Wars Nod armor push screenshot">
+        <figcaption>
+          <h2>Frontline Engagement</h2>
+          <p>Nod ground assault with vehicles and support units in active combat.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://placehold.co/1200x675/101815/a7ffa7?text=C%26C+Tiberium+Wars+-+Mission+Briefing" alt="Command and Conquer Tiberium Wars mission briefing screen">
+        <figcaption>
+          <h2>Faction Intel Screen</h2>
+          <p>Mission briefing panel showing objectives before deployment.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://placehold.co/1200x675/0f1712/8cff8c?text=C%26C+Tiberium+Wars+-+Theater+Map+Overview" alt="Command and Conquer Tiberium Wars strategic map overview">
+        <figcaption>
+          <h2>Map Overview</h2>
+          <p>Theater map view used for route planning and objective control.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://placehold.co/1200x675/132019/9eff9e?text=C%26C+Tiberium+Wars+-+Urban+Combat+Zone" alt="Command and Conquer Tiberium Wars urban combat screenshot">
+        <figcaption>
+          <h2>Urban Combat Zone</h2>
+          <p>Urban combat sequence with pressure from multiple enemy lanes.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="https://placehold.co/1200x675/0c1510/a1ffa1?text=C%26C+Tiberium+Wars+-+Tactical+Data+Feed" alt="Command and Conquer Tiberium Wars tactical data feed screenshot">
+        <figcaption>
+          <h2>Tactical Data Feed</h2>
+          <p>Live tactical feed tracking mission objectives and enemy activity.</p>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="submission-box" aria-label="Screenshot submission">
+      <h2>Submit Your Screenshot</h2>
+      <p>Send in your own campaign screenshot for a chance to be featured. Email is required. Message and attachments are optional. Submissions are saved to Google Drive.</p>
+      <form id="screenshotSubmissionForm" novalidate>
+        <div class="submit-grid">
+          <div class="field">
+            <label for="submitEmail">Email <span aria-hidden="true">*</span></label>
+            <input id="submitEmail" name="email" type="email" required placeholder="name@example.com" autocomplete="email">
+            <p class="helper">Required for submission updates.</p>
+          </div>
+          <div class="field">
+            <label for="submitAttachments">Attachments (optional)</label>
+            <input id="submitAttachments" name="attachments" type="file" accept="image/*" multiple>
+            <p class="helper">Optional: up to 3 image files, 5MB each.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="submitMessage">Message (optional)</label>
+          <textarea id="submitMessage" name="message" maxlength="500" placeholder="Mission name, context, or why this screenshot stands out..."></textarea>
+        </div>
+
+        <div class="submission-actions">
+          <button class="submit-btn" type="submit">Submit Screenshot</button>
+          <p class="submit-status" id="submitStatus" role="status" aria-live="polite">No submission yet.</p>
+        </div>
+      </form>
+    </section>
+
+    <p class="note">
+      Want to be featured? Share your favorite campaign screenshot and include the mission name.
+    </p>
+  </main>
+
+  <footer>
+    © Smilycirus Pro 2026 · <a href="index.html">Back to Home</a>
+  </footer>
+
+  <script>
+    // Configuration - Google Apps Script Deployment URL
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWoGG2XY-dS0Oa4eXVHZJWEyR-S04btWPRIRT-u0pjaQobTSMEDYFwdK3pc80_9LZW/exec";
+
+    const screenshotForm = document.getElementById('screenshotSubmissionForm');
+    const submitEmail = document.getElementById('submitEmail');
+    const submitMessage = document.getElementById('submitMessage');
+    const submitAttachments = document.getElementById('submitAttachments');
+    const submitStatus = document.getElementById('submitStatus');
+    const submitButton = screenshotForm.querySelector('button[type="submit"]');
+
+    function setStatus(message, color) {
+      submitStatus.textContent = message;
+      submitStatus.style.color = color;
+    }
+
+    screenshotForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!submitEmail.checkValidity()) {
+        setStatus('Please enter a valid email before submitting.', '#f6b287');
+        submitEmail.focus();
+        return;
+      }
+
+      const files = Array.from(submitAttachments.files || []);
+      const tooManyFiles = files.length > 3;
+      const oversizedFile = files.find((file) => file.size > 5 * 1024 * 1024);
+      const invalidType = files.find((file) => !file.type.startsWith('image/'));
+
+      if (tooManyFiles) {
+        setStatus('Please attach at most 3 files.', '#f6b287');
+        return;
+      }
+
+      if (oversizedFile) {
+        setStatus(`File "${oversizedFile.name}" is larger than 5MB.`, '#f6b287');
+        return;
+      }
+
+      if (invalidType) {
+        setStatus(`File "${invalidType.name}" is not an image.`, '#f6b287');
+        return;
+      }
+
+      submitButton.disabled = true;
+      setStatus('Uploading submission to Google Drive…', '#9dd3ff');
+
+      try {
+        // Convert files to base64
+        const fileData = [];
+        for (const file of files) {
+          const base64 = await fileToBase64(file);
+          fileData.push({
+            name: file.name,
+            type: file.type,
+            data: base64
+          });
+        }
+
+        // Prepare submission data
+        const submissionData = {
+          email: submitEmail.value.trim(),
+          message: submitMessage.value.trim(),
+          files: fileData
+        };
+
+        // Send to Google Apps Script
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(submissionData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          setStatus('Submitted successfully to Google Drive!', '#8ef3b0');
+          screenshotForm.reset();
+        } else {
+          setStatus('Submission failed: ' + result.message, '#f6b287');
+        }
+      } catch (error) {
+        console.error('Submission failed', error);
+        setStatus('Submission failed. Please try again in a moment.', '#f6b287');
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    // Helper function to convert file to base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
 </body>
 </html>
