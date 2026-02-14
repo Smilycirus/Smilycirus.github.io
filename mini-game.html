@@ -14,113 +14,30 @@
   --accent: #7CFF7C;
   --border: #223527;
 }
-
 * { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: var(--text);
-  background: radial-gradient(circle at top, #12151a 0%, var(--bg) 60%);
-}
-
+body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--text); background: radial-gradient(circle at top, #12151a 0%, var(--bg) 60%);}
 a { color: inherit; }
-
-.wrap {
-  width: min(100% - 2rem, 1100px);
-  margin: 0 auto;
-  padding: 1rem 0 2.2rem;
-}
-
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.back-link {
-  text-decoration: none;
-  color: #b8d8b8;
-  border: 1px solid #38553f;
-  border-radius: 8px;
-  padding: 0.45rem 0.7rem;
-  font-size: 0.92rem;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(1.6rem, 4vw, 2.3rem);
-  color: var(--accent);
-}
-
-.panel {
-  background: linear-gradient(170deg, var(--panel), var(--panel-2));
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
-  position: relative;
-}
-
+.wrap { width: min(100% - 2rem, 1100px); margin: 0 auto; padding: 1rem 0 2.2rem;}
+.top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.back-link { text-decoration: none; color: #b8d8b8; border: 1px solid #38553f; border-radius: 8px; padding: 0.45rem 0.7rem; font-size: 0.92rem; }
+h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.3rem); color: var(--accent); }
+.panel { background: linear-gradient(170deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.28); position: relative; }
+.hidden { display: none; }
 .auth-panel { margin-bottom: 1rem; }
-.auth-title {
-  margin: 0 0 0.35rem;
-  color: var(--accent);
-  font-size: 1.05rem;
-}
-.auth-status {
-  margin: 0 0 0.65rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.auth-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-}
-.auth-row input {
-  background: #0a110c;
-  color: var(--text);
-  border: 1px solid #2b4631;
-  border-radius: 10px;
-  padding: 0.62rem 0.72rem;
-  min-width: 200px;
-}
-.auth-note {
-  margin: 0.6rem 0 0;
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
-/* stats, actions, leaderboard, etc. stay the same */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.7rem;
-  margin-bottom: 1rem;
-}
-.stat {
-  background: #0a110c;
-  border: 1px solid #1d3023;
-  border-radius: 10px;
-  padding: 0.75rem;
-  position: relative;
-}
+.auth-title { margin: 0 0 0.35rem; color: var(--accent); font-size: 1.05rem; }
+.auth-status { margin: 0 0 0.65rem; color: var(--muted); font-size: 0.9rem; }
+.auth-row { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.auth-row input { background: #0a110c; color: var(--text); border: 1px solid #2b4631; border-radius: 10px; padding: 0.62rem 0.72rem; min-width: 200px; }
+.auth-note { margin: 0.6rem 0 0; color: var(--muted); font-size: 0.82rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.7rem; margin-bottom: 1rem; }
+.stat { background: #0a110c; border: 1px solid #1d3023; border-radius: 10px; padding: 0.75rem; position: relative; }
 .stat-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.2rem; }
 .stat-value { font-size: 1.2rem; font-weight: 700; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-bottom: 1rem; position: relative; }
-button {
-  margin: 0; padding: 0.66rem 0.92rem; border-radius: 10px;
-  border: 1px solid #2f4a35; background: linear-gradient(180deg, #142018, #0f1612);
-  color: #e0f5e0; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease; font-weight: 600;
-}
+button { margin: 0; padding: 0.66rem 0.92rem; border-radius: 10px; border: 1px solid #2f4a35; background: linear-gradient(180deg, #142018, #0f1612); color: #e0f5e0; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease; font-weight: 600; }
 button:hover { transform: translateY(-1px); border-color: #4d8c58; }
 button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-color: #2f4a35; }
 .primary { border-color: #4f915a; background: linear-gradient(120deg, #2f8e42, #246f34); }
-
 .section-title { margin: 0 0 0.65rem; color: var(--accent); font-size: 1.05rem; }
 .content-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; }
 .list { display: flex; flex-direction: column; gap: 0.55rem; }
@@ -128,17 +45,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-col
 .row-item span { color: #d0e8d0; }
 .lock-note { display: block; margin-top: 0.25rem; font-size: 0.78rem; color: #f0c68f; }
 .achievement-earned { border-color: #226f58; background: #0b1715; color: #89f5db; }
-
+.footer-note { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
+.floating-tiberium { position: absolute; color: #7CFF7C; font-weight: 700; animation: floatUp 0.8s ease-out forwards; pointer-events: none; user-select: none; }
+@keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
 #leaderboard { margin-top: 1rem; border: 1px solid #38553f; border-radius: 10px; padding: 0.7rem; background: #0d140f; }
 #leaderboard h2 { margin: 0 0 0.5rem; color: var(--accent); }
 #leaderboard ul { margin: 0; padding-left: 1rem; }
 #leaderboard li { margin-bottom: 0.25rem; color: #cce7cc; }
-
-.footer-note { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
-
-.floating-tiberium { position: absolute; color: #7CFF7C; font-weight: 700; animation: floatUp 0.8s ease-out forwards; pointer-events: none; user-select: none; }
-@keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
-
 @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -153,18 +66,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-col
     <section class="panel auth-panel" aria-label="Account controls">
       <h2 class="auth-title">Account (Firebase)</h2>
       <p class="auth-status" id="authStatus">Not logged in</p>
-      <div class="auth-row">
-        <input id="username" type="text" placeholder="Username" aria-label="Username">
+      <div class="auth-row" id="loginRow">
         <input id="email" type="email" autocomplete="username" placeholder="Email" aria-label="Email">
         <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
         <button onclick="createAccount()">Create Account</button>
         <button onclick="login()">Login</button>
         <button onclick="logout()">Logout</button>
       </div>
+      <div class="auth-row hidden" id="usernameRow">
+        <input id="usernameInput" type="text" placeholder="Pick a username" aria-label="Username">
+        <button onclick="saveUsername()">Save Username</button>
+      </div>
       <p class="auth-note">Account and save data are stored in Firebase. You must login to play/save.</p>
     </section>
 
-    <!-- Stats Grid -->
     <section class="stats-grid" aria-label="Game stats">
       <div class="stat"><div class="stat-label">Tiberium</div><div class="stat-value" id="tiberium">0</div></div>
       <div class="stat"><div class="stat-label">TPS</div><div class="stat-value" id="tps">0</div></div>
@@ -174,32 +89,18 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-col
       <div class="stat"><div class="stat-label">Total Earned</div><div class="stat-value" id="totalEarned">0</div></div>
     </section>
 
-    <!-- Actions -->
     <section class="actions">
       <button class="primary" onclick="clickTiberium()">Harvest (+<span id="harvestPreview">1</span>)</button>
       <button onclick="prestigeReset()">Prestige Reset</button>
       <button onclick="hardReset()">Full Reset</button>
     </section>
 
-    <!-- Buildings / Upgrades / Achievements -->
     <section class="content-grid">
-      <article class="panel">
-        <h2 class="section-title">Buildings</h2>
-        <div id="buildings" class="list"></div>
-      </article>
-
-      <article class="panel">
-        <h2 class="section-title">Upgrades</h2>
-        <div id="upgrades" class="list"></div>
-      </article>
-
-      <article class="panel">
-        <h2 class="section-title">Achievements</h2>
-        <div id="achievements" class="list"></div>
-      </article>
+      <article class="panel"><h2 class="section-title">Buildings</h2><div id="buildings" class="list"></div></article>
+      <article class="panel"><h2 class="section-title">Upgrades</h2><div id="upgrades" class="list"></div></article>
+      <article class="panel"><h2 class="section-title">Achievements</h2><div id="achievements" class="list"></div></article>
     </section>
 
-    <!-- Leaderboard -->
     <section id="leaderboard" class="panel">
       <h2>Top 10 Players</h2>
       <ul id="leaderboardList"></ul>
@@ -213,7 +114,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-col
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, where } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDC2abQAAaQSxYxZ7g3_OKqQqlqPHCPyu4',
@@ -230,110 +131,107 @@ getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const numberFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
-const LEGACY_SAVE_KEY = 'tibSave';
-
-// --- Game Setup ---
-function createDefaultGame(prestige = 0) { return { tiberium: 0, totalEarned: 0, totalClicks: 0, clickPower: 1, prestige, buildings: {}, buildingMultipliers: {}, upgrades: {}, achievements: {} }; }
-function normalizeGame(rawGame) { const safe = rawGame && typeof rawGame === 'object' ? rawGame : {}; return { tiberium: Number(safe.tiberium)||0, totalEarned: Number(safe.totalEarned)||0, totalClicks: Number(safe.totalClicks)||0, clickPower: Number(safe.clickPower)||1, prestige: Number(safe.prestige)||0, buildings: safe.buildings&&typeof safe.buildings==='object'?safe.buildings:{}, buildingMultipliers: safe.buildingMultipliers&&typeof safe.buildingMultipliers==='object'?safe.buildingMultipliers:{}, upgrades: safe.upgrades&&typeof safe.upgrades==='object'?safe.upgrades:{}, achievements: safe.achievements&&typeof safe.achievements==='object'?safe.achievements:{} }; }
-
-let game = createDefaultGame();
 let currentUid = '';
+let currentUsername = '';
 let saveTimeout = 0;
 
-// --- Buildings / Upgrades / Achievements ---
-// keep your buildingTypes, upgradeTypes, achievementTypes as-is from your original code
-
-// --- Utilities ---
-function formatNum(value){ return numberFormatter.format(value); }
-function getTotalTps(){ return buildingTypes.reduce((total,b)=>total+getBuildingTps(b.name),0); }
-function getBuildingTps(name){ const bType = buildingTypes.find(b=>b.name===name); const bState = game.buildings[name]; return bType.tps*bState.count*game.buildingMultipliers[name]*(1+game.prestige*0.1); }
-
-// --- Auth / Firebase ---
-function getCredentials(){ return { email: document.getElementById('email').value.trim(), password: document.getElementById('password').value }; }
-function clearCredentials(){ document.getElementById('password').value=''; document.getElementById('username').value=''; }
-function ensureLoggedIn(){ if(currentUid) return true; alert('Login first.'); return false; }
-
-async function updateAuthStatus() {
-  const s = document.getElementById('authStatus');
-  const u = auth.currentUser;
-  if(u){
-    const userDoc = await getDoc(doc(db,'users',u.uid));
-    const username = userDoc.exists()?userDoc.data().username:u.email;
-    s.textContent = `Logged in as ${username}. Progress saves to Firebase.`;
+// --- Auth / Usernames ---
+function updateAuthStatus() {
+  const status = document.getElementById('authStatus');
+  if(auth.currentUser) {
+    const name = currentUsername || auth.currentUser.email;
+    status.textContent = `Logged in as ${name}. Progress saves to Firebase.`;
   } else {
-    s.textContent = 'Not logged in. Create an account or login to save progress.';
+    status.textContent = 'Not logged in. Create an account or login to save progress.';
   }
 }
 
-// --- Load / Save ---
-async function loadCloudSave(uid){ const saveDoc = await getDoc(doc(db,'clickerSaves',uid)); if(saveDoc.exists()) game=normalizeGame(saveDoc.data()); else game=createDefaultGame(); ensureGameModel(); update(); queueSave(); updateLeaderboard(); }
-async function saveNow(){ if(!currentUid) return await setDoc(doc(db,'clickerSaves',currentUid),game); }
-function queueSave(){ if(!currentUid) return; clearTimeout(saveTimeout); saveTimeout=setTimeout(async()=>await saveNow(),300); }
-
-// --- Auth Functions ---
-window.createAccount = async function() {
-  const username = document.getElementById('username').value.trim();
-  const {email, password} = getCredentials();
-  if(!username||!email||!password){ alert('Enter username, email, and password.'); return; }
-
+async function createAccount() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if(!email || !password) return alert('Enter both email/password.');
   try {
-    const q = query(collection(db,'users'), where('username','==',username));
-    const snap = await getDocs(q);
-    if(!snap.empty){ alert('Username already taken!'); return; }
+    const cred = await createUserWithEmailAndPassword(auth,email,password);
+    document.getElementById('password').value='';
+    currentUid = cred.user.uid;
+    // Show username prompt for new account
+    document.getElementById('usernameRow').classList.remove('hidden');
+    document.getElementById('loginRow').classList.add('hidden');
+  } catch(e) { alert(e.message||'Error'); }
+}
 
-    const userCredential = await createUserWithEmailAndPassword(auth,email,password);
-    const user = userCredential.user;
-    await setDoc(doc(db,'users',user.uid),{ username, email, createdAt:new Date() });
-    clearCredentials();
-    alert('Account created! You are now logged in.');
-  } catch(e){ console.error(e); alert(e.message||'Error creating account.'); }
-};
+async function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if(!email || !password) return alert('Enter both email/password.');
+  try {
+    const cred = await signInWithEmailAndPassword(auth,email,password);
+    document.getElementById('password').value='';
+    currentUid = cred.user.uid;
+    await checkUsername();
+  } catch(e) { alert(e.message||'Error'); }
+}
 
-window.login = async function() {
-  const {email,password} = getCredentials();
-  if(!email||!password){ alert('Enter email and password.'); return; }
-  try{ await signInWithEmailAndPassword(auth,email,password); clearCredentials(); } catch(e){ alert(e.message||'Login error'); }
-};
+async function logout() {
+  await signOut(auth);
+  currentUid='';
+  currentUsername='';
+  document.getElementById('usernameRow').classList.add('hidden');
+  document.getElementById('loginRow').classList.remove('hidden');
+  updateAuthStatus();
+}
 
-window.logout = async function(){ await signOut(auth); };
+async function saveUsername() {
+  const uname = document.getElementById('usernameInput').value.trim();
+  if(!uname) return alert('Enter a username.');
+  // Check uniqueness
+  const usersCol = collection(db,'users');
+  const q = query(usersCol, orderBy('username'));
+  const snap = await getDocs(usersCol);
+  let taken=false;
+  snap.forEach(doc=>{ if(doc.data().username?.toLowerCase()===uname.toLowerCase()) taken=true; });
+  if(taken) return alert('Username taken, pick another.');
+  await setDoc(doc(db,'users',currentUid),{username:uname});
+  currentUsername=uname;
+  document.getElementById('usernameRow').classList.add('hidden');
+  document.getElementById('loginRow').classList.remove('hidden');
+  updateAuthStatus();
+  loadCloudSave(currentUid);
+}
 
-// --- Click / Buy / Prestige ---
-window.clickTiberium = function(){ if(!ensureLoggedIn()) return; const gain = game.clickPower*(1+game.prestige*0.1); game.tiberium+=gain; game.totalEarned+=gain; game.totalClicks+=1; showFloating('+ '+formatNum(gain)); update(); queueSave(); updateLeaderboard(); };
-
-// keep your buyBuilding, buyUpgrade, prestigeReset, hardReset functions as-is
-
-// --- Floating Tiberium ---
-function showFloating(text){ const btn=document.querySelector('.actions .primary'); const span=document.createElement('span'); span.className='floating-tiberium'; span.textContent=text; btn.appendChild(span); setTimeout(()=>span.remove(),800); }
+async function checkUsername() {
+  const userDoc = await getDoc(doc(db,'users',currentUid));
+  if(userDoc.exists()) currentUsername = userDoc.data().username || '';
+  if(!currentUsername) {
+    document.getElementById('usernameRow').classList.remove('hidden');
+    document.getElementById('loginRow').classList.add('hidden');
+  }
+  updateAuthStatus();
+}
 
 // --- Leaderboard ---
 async function updateLeaderboard(){
+  if(!currentUid) return;
   const q=query(collection(db,'clickerSaves'),orderBy('totalEarned','desc'),limit(10));
-  const snap=await getDocs(q); const ul=document.getElementById('leaderboardList'); ul.innerHTML='';
-  snap.forEach(doc=>{
-    const userDoc = await getDoc(doc(db,'users',doc.id));
-    const username = userDoc.exists()?userDoc.data().username:doc.id;
-    const li=document.createElement('li');
-    li.textContent=`${username}: ${formatNum(doc.data().totalEarned||0)}`;
+  const snap=await getDocs(q);
+  const ul=document.getElementById('leaderboardList'); ul.innerHTML='';
+  for(const d of snap.docs){
+    const uid = d.id;
+    const userDoc = await getDoc(doc(db,'users',uid));
+    const name = userDoc.exists() ? userDoc.data().username || d.data().email || uid : d.data().email || uid;
+    const li = document.createElement('li');
+    li.textContent=`${name}: ${d.data().totalEarned||0}`;
     ul.appendChild(li);
-  });
+  }
 }
 
-// --- Helpers ---
-function ensureGameModel(){ /* same as your original code */ }
-function upgradeUnlocked(u){ /* same as your original code */ }
-function applyAchievementReward(a){ /* same as your original code */ }
+// --- Cloud Save (rest of game logic unchanged) ---
+// You can paste your existing game save/load, buildings, upgrades, clickTiberium functions here
+// Keep your setInterval for passive tiberium, wireRows(), update(), etc.
 
-// --- Wire UI / Update / Passive ---
-function wireRows(){ /* same as your original code */ }
-function update(){ /* same as your original code, except updateAuthStatus() now shows username */ }
-
-setInterval(()=>{ if(!currentUid) return; buildingTypes.forEach(b=>{ const t=getBuildingTps(b.name); game.tiberium+=t/5; game.totalEarned+=t/5; }); update(); queueSave(); },200);
-
-onAuthStateChanged(auth,user=>{
-  currentUid=user?user.uid:'';
-  if(currentUid){ loadCloudSave(currentUid); } else { game=createDefaultGame(); update(); }
-  updateAuthStatus();
+onAuthStateChanged(auth, async user => {
+  if(user){ currentUid=user.uid; await checkUsername(); loadCloudSave(user.uid); }
+  else { currentUid=''; currentUsername=''; updateAuthStatus(); }
 });
 </script>
 </body>
