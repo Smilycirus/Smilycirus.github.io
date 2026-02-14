@@ -250,21 +250,6 @@ button:disabled {
 </style>
 </head>
 <body>
-  <div class="howto-modal" id="howtoModal" role="dialog" aria-modal="true" aria-labelledby="howtoTitle">
-    <div class="panel howto-panel">
-      <h2 class="howto-title" id="howtoTitle">How to play Tiberium Clicker</h2>
-      <p>Harvest Tiberium, buy buildings for passive income, and unlock upgrades to scale faster.</p>
-      <ul>
-        <li>Click <strong>Harvest</strong> for instant Tiberium gains.</li>
-        <li>Spend Tiberium on <strong>Buildings</strong> to increase TPS (income per second).</li>
-        <li>Unlock <strong>Upgrades</strong> as you own more buildings and hit milestones.</li>
-        <li>Complete <strong>Achievements</strong> to earn reward bonuses.</li>
-      </ul>
-      <p><strong>Prestige requirement:</strong> You earn Prestige Crystals when using Prestige Reset. Crystals gained = <code>floor(total earned ÷ 10,000)</code>. You need to have earned at least <strong>10,000 total Tiberium</strong> for your first crystal.</p>
-      <button class="primary howto-close" onclick="closeHowToModal()">Got it, let me play</button>
-    </div>
-  </div>
-
   <div class="wrap">
     <div class="top">
       <a class="back-link" href="index.html">← Back to Home</a>
@@ -396,46 +381,12 @@ const upgradeTypes = [
   { name: 'Temple Overclock', cost: 175000, type: 'Temple Reactor', multi: 2, unlock: { building: 'Crystal Mine', count: 4 } },
   { name: 'Global Logistics', cost: 520000, type: 'all', multi: 1.25, unlock: { building: 'Temple Reactor', count: 3 } },
   { name: 'Rig Swarm Protocol', cost: 1500000, type: 'Tiberium Rig', multi: 2, unlock: { building: 'Temple Reactor', count: 8 } } ,
-  { name: 'Speed Upgrade', cost: 100 },
-  { name: 'Power Upgrade', cost: 150 },
-    { name: 'Durability Upgrade', cost: 200 },
-    { name: 'Cooldown Reduction', cost: 250 },
-    { name: 'Range Upgrade', cost: 300 },
-    { name: 'Fire Rate Upgrade', cost: 350 },
-    { name: 'Critical Hit Upgrade', cost: 400 },
-    { name: 'Life Steal Upgrade', cost: 450 },
-    { name: 'Drop Rate Upgrade', cost: 500 },
-    { name: 'Stealth Upgrade', cost: 550 },
-    { name: 'Armor Upgrade', cost: 600 },
-    { name: 'Explosive Rounds Upgrade', cost: 650 },
-    { name: 'Area Damage Upgrade', cost: 700 },
-    { name: 'Piercing Shots Upgrade', cost: 750 },
-    { name: 'Elemental Damage Upgrade', cost: 800 },
-    { name: 'Movement Speed Upgrade', cost: 850 },
-    { name: 'Knockback Upgrade', cost: 900 },
-    { name: 'Health Upgrade', cost: 950 },
-    { name: 'Mana Upgrade', cost: 1000 },
-    { name: 'Experience Gain Upgrade', cost: 1050 },
-    { name: 'Ability Power Upgrade', cost: 1100 },
-    { name: 'Summon Upgrade', cost: 1150 },
-    { name: 'Resource Generation Upgrade', cost: 1200 },
-    { name: 'Shield Upgrade', cost: 1250 },
-    { name: 'Damage Resistance Upgrade', cost: 1300 },
-    { name: 'Teleportation Upgrade', cost: 1350 },
-    { name: 'Mining Upgrade', cost: 1400 },
-    { name: 'Crafting Speed Upgrade', cost: 1450 },
-    { name: 'Fishing Upgrade', cost: 1500 },
-    { name: 'Agility Upgrade', cost: 1550 },
-    { name: 'Crafting Quality Upgrade', cost: 1600 },
-    { name: 'Fishing Luck Upgrade', cost: 1650 },
-    { name: 'Pet Upgrade', cost: 1700 },
-    { name: 'Stat Resets Upgrade', cost: 1750 },
-    { name: 'Daily Reward Upgrade', cost: 1800 }];
+
 ];
 
 const achievementTypes = [
   { name: 'First Click', description: 'Perform your first harvest.', condition: () => game.totalClicks >= 1, reward: { type: 'tiberium', value: 25 } },
-  { name: 'Field Technician', description: 'Own 10 Harvesters.', condition: () => game.buildings.Harvester?.count >= 10, reward: { type: 'buildingBoost', building: 'Harvester', value: 1.25 } },
+  { name: 'Field Technician', description: 'Own 10 Harvesters.', condition: () => game.buildings.Harvester?.cunt >= 10, reward: { type: 'buildingBoost', building: 'Harvester', value: 1.25 } },
   { name: '100 Tiberium', description: 'Earn 100 total Tiberium.', condition: () => game.totalEarned >= 100, reward: { type: 'clickPower', value: 1 } },
   { name: '1000 Tiberium', description: 'Earn 1,000 total Tiberium.', condition: () => game.totalEarned >= 1000, reward: { type: 'tiberium', value: 250 } },
   { name: 'Industrial Core', description: 'Own 5 Refineries and 3 Labs.', condition: () => game.buildings.Refinery?.count >= 5 && game.buildings.Lab?.count >= 3, reward: { type: 'buildingBoost', building: 'Refinery', value: 1.2 } },
