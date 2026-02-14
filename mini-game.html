@@ -14,45 +14,279 @@
   --accent: #7CFF7C;
   --border: #223527;
 }
+
 * { box-sizing: border-box; }
-body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--text); background: radial-gradient(circle at top, #12151a 0%, var(--bg) 60%);}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top, #12151a 0%, var(--bg) 60%);
+}
+
 a { color: inherit; }
-.wrap { width: min(100% - 2rem, 1100px); margin: 0 auto; padding: 1rem 0 2.2rem;}
-.top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-.back-link { text-decoration: none; color: #b8d8b8; border: 1px solid #38553f; border-radius: 8px; padding: 0.45rem 0.7rem; font-size: 0.92rem; }
-h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.3rem); color: var(--accent); }
-.panel { background: linear-gradient(170deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.28); position: relative; }
-.hidden { display: none; }
+
+.wrap {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 1rem 0 2.2rem;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.back-link {
+  text-decoration: none;
+  color: #b8d8b8;
+  border: 1px solid #38553f;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.92rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  color: var(--accent);
+}
+
+.panel {
+  background: linear-gradient(170deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  position: relative;
+}
+
+.howto-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(4, 8, 5, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.howto-panel {
+  width: min(100%, 640px);
+}
+
+.howto-title {
+  margin: 0 0 0.55rem;
+  color: var(--accent);
+}
+
+.howto-modal p,
+.howto-modal li {
+  color: #cce7cc;
+}
+
+.howto-modal ul {
+  margin: 0.65rem 0 1rem;
+  padding-left: 1.2rem;
+}
+
+.howto-close {
+  min-width: 180px;
+}
+
+.hidden {
+  display: none;
+}
+
 .auth-panel { margin-bottom: 1rem; }
-.auth-title { margin: 0 0 0.35rem; color: var(--accent); font-size: 1.05rem; }
-.auth-status { margin: 0 0 0.65rem; color: var(--muted); font-size: 0.9rem; }
-.auth-row { display: flex; flex-wrap: wrap; gap: 0.55rem; }
-.auth-row input { background: #0a110c; color: var(--text); border: 1px solid #2b4631; border-radius: 10px; padding: 0.62rem 0.72rem; min-width: 200px; }
-.auth-note { margin: 0.6rem 0 0; color: var(--muted); font-size: 0.82rem; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.7rem; margin-bottom: 1rem; }
-.stat { background: #0a110c; border: 1px solid #1d3023; border-radius: 10px; padding: 0.75rem; position: relative; }
-.stat-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.2rem; }
-.stat-value { font-size: 1.2rem; font-weight: 700; }
-.actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-bottom: 1rem; position: relative; }
-button { margin: 0; padding: 0.66rem 0.92rem; border-radius: 10px; border: 1px solid #2f4a35; background: linear-gradient(180deg, #142018, #0f1612); color: #e0f5e0; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease; font-weight: 600; }
-button:hover { transform: translateY(-1px); border-color: #4d8c58; }
-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-color: #2f4a35; }
-.primary { border-color: #4f915a; background: linear-gradient(120deg, #2f8e42, #246f34); }
-.section-title { margin: 0 0 0.65rem; color: var(--accent); font-size: 1.05rem; }
-.content-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; }
-.list { display: flex; flex-direction: column; gap: 0.55rem; }
-.row-item { background: #0a110c; border: 1px solid #1d3023; border-radius: 10px; padding: 0.65rem; display: flex; justify-content: space-between; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.auth-title {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+.auth-status {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.auth-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.auth-row input {
+  background: #0a110c;
+  color: var(--text);
+  border: 1px solid #2b4631;
+  border-radius: 10px;
+  padding: 0.62rem 0.72rem;
+  min-width: 200px;
+}
+.auth-note {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  background: #0a110c;
+  border: 1px solid #1d3023;
+  border-radius: 10px;
+  padding: 0.75rem;
+  position: relative;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+button {
+  margin: 0;
+  padding: 0.66rem 0.92rem;
+  border-radius: 10px;
+  border: 1px solid #2f4a35;
+  background: linear-gradient(180deg, #142018, #0f1612);
+  color: #e0f5e0;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  font-weight: 600;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  border-color: #4d8c58;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  border-color: #2f4a35;
+}
+
+.primary {
+  border-color: #4f915a;
+  background: linear-gradient(120deg, #2f8e42, #246f34);
+}
+
+.section-title {
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.row-item {
+  background: #0a110c;
+  border: 1px solid #1d3023;
+  border-radius: 10px;
+  padding: 0.65rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
 .row-item span { color: #d0e8d0; }
-.lock-note { display: block; margin-top: 0.25rem; font-size: 0.78rem; color: #f0c68f; }
-.achievement-earned { border-color: #226f58; background: #0b1715; color: #89f5db; }
-.footer-note { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
-.floating-tiberium { position: absolute; color: #7CFF7C; font-weight: 700; animation: floatUp 0.8s ease-out forwards; pointer-events: none; user-select: none; }
-@keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
-#leaderboard { margin-top: 1rem; border: 1px solid #38553f; border-radius: 10px; padding: 0.7rem; background: #0d140f; }
-#leaderboard h2 { margin: 0 0 0.5rem; color: var(--accent); }
-#leaderboard ul { margin: 0; padding-left: 1rem; }
-#leaderboard li { margin-bottom: 0.25rem; color: #cce7cc; }
-@media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+
+.lock-note {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #f0c68f;
+}
+
+.achievement-earned {
+  border-color: #226f58;
+  background: #0b1715;
+  color: #89f5db;
+}
+
+.footer-note {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.floating-tiberium {
+  position: absolute;
+  color: #7CFF7C;
+  font-weight: 700;
+  animation: floatUp 0.8s ease-out forwards;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-50px); opacity: 0; }
+}
+
+#leaderboard {
+  margin-top: 1rem;
+  border: 1px solid #38553f;
+  border-radius: 10px;
+  padding: 0.7rem;
+  background: #0d140f;
+}
+
+#leaderboard h2 {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+}
+
+#leaderboard ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+#leaderboard li {
+  margin-bottom: 0.25rem;
+  color: #cce7cc;
+}
+
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -66,16 +300,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-col
     <section class="panel auth-panel" aria-label="Account controls">
       <h2 class="auth-title">Account (Firebase)</h2>
       <p class="auth-status" id="authStatus">Not logged in</p>
-      <div class="auth-row" id="loginRow">
+      <div class="auth-row">
         <input id="email" type="email" autocomplete="username" placeholder="Email" aria-label="Email">
         <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
         <button onclick="createAccount()">Create Account</button>
         <button onclick="login()">Login</button>
         <button onclick="logout()">Logout</button>
-      </div>
-      <div class="auth-row hidden" id="usernameRow">
-        <input id="usernameInput" type="text" placeholder="Pick a username" aria-label="Username">
-        <button onclick="saveUsername()">Save Username</button>
       </div>
       <p class="auth-note">Account and save data are stored in Firebase. You must login to play/save.</p>
     </section>
@@ -96,9 +326,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; border-col
     </section>
 
     <section class="content-grid">
-      <article class="panel"><h2 class="section-title">Buildings</h2><div id="buildings" class="list"></div></article>
-      <article class="panel"><h2 class="section-title">Upgrades</h2><div id="upgrades" class="list"></div></article>
-      <article class="panel"><h2 class="section-title">Achievements</h2><div id="achievements" class="list"></div></article>
+      <article class="panel">
+        <h2 class="section-title">Buildings</h2>
+        <div id="buildings" class="list"></div>
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Upgrades</h2>
+        <div id="upgrades" class="list"></div>
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Achievements</h2>
+        <div id="achievements" class="list"></div>
+      </article>
     </section>
 
     <section id="leaderboard" class="panel">
@@ -131,82 +372,135 @@ getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const numberFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+const LEGACY_SAVE_KEY = 'tibSave';
+
+// --- Game Setup ---
+function createDefaultGame(prestige = 0) {
+  return {
+    tiberium: 0,
+    totalEarned: 0,
+    totalClicks: 0,
+    clickPower: 1,
+    prestige,
+    buildings: {},
+    buildingMultipliers: {},
+    upgrades: {},
+    achievements: {}
+  };
+}
+
+function normalizeGame(rawGame) {
+  const safe = rawGame && typeof rawGame === 'object' ? rawGame : {};
+  return {
+    tiberium: Number(safe.tiberium) || 0,
+    totalEarned: Number(safe.totalEarned) || 0,
+    totalClicks: Number(safe.totalClicks) || 0,
+    clickPower: Number(safe.clickPower) || 1,
+    prestige: Number(safe.prestige) || 0,
+    buildings: safe.buildings && typeof safe.buildings === 'object' ? safe.buildings : {},
+    buildingMultipliers: safe.buildingMultipliers && typeof safe.buildingMultipliers === 'object' ? safe.buildingMultipliers : {},
+    upgrades: safe.upgrades && typeof safe.upgrades === 'object' ? safe.upgrades : {},
+    achievements: safe.achievements && typeof safe.achievements === 'object' ? safe.achievements : {}
+  };
+}
+
+let game = createDefaultGame();
 let currentUid = '';
-let currentUsername = '';
 let saveTimeout = 0;
 
-// --- Auth / Usernames ---
-function updateAuthStatus() {
-  const status = document.getElementById('authStatus');
-  if(auth.currentUser) {
-    const name = currentUsername || auth.currentUser.email;
-    status.textContent = `Logged in as ${name}. Progress saves to Firebase.`;
-  } else {
-    status.textContent = 'Not logged in. Create an account or login to save progress.';
+// --- Buildings / Upgrades / Achievements ---
+const buildingTypes = [
+  { name: 'Harvester', base: 10, tps: 1 },
+  { name: 'Refinery', base: 100, tps: 8 },
+  { name: 'Lab', base: 1000, tps: 47 },
+  { name: 'Crystal Mine', base: 10000, tps: 260 },
+  { name: 'Temple Reactor', base: 70000, tps: 1450 },
+  { name: 'Tiberium Rig', base: 350000, tps: 7800 },
+  { name: 'Quantum Extractor', base: 1200000, tps: 25000 },
+  { name: 'Dimensional Core', base: 5000000, tps: 120000 }
+];
+
+const upgradeTypes = [
+  { name: 'Double Click', cost: 100, type: 'click', multi: 2 },
+  { name: 'Harvester Boost', cost: 500, type: 'Harvester', multi: 2 },
+  { name: 'Refinery Boost', cost: 2000, type: 'Refinery', multi: 2, unlock: { building: 'Harvester', count: 10 } },
+  { name: 'Lab Automation', cost: 12000, type: 'Lab', multi: 2, unlock: { building: 'Refinery', count: 5 } },
+  { name: 'Crystal Compression', cost: 60000, type: 'Crystal Mine', multi: 2, unlock: { building: 'Lab', count: 6 } },
+  { name: 'Temple Overclock', cost: 175000, type: 'Temple Reactor', multi: 2, unlock: { building: 'Crystal Mine', count: 4 } },
+  { name: 'Global Logistics', cost: 520000, type: 'all', multi: 1.25, unlock: { building: 'Temple Reactor', count: 3 } },
+  { name: 'Rig Swarm Protocol', cost: 1500000, type: 'Tiberium Rig', multi: 2, unlock: { building: 'Temple Reactor', count: 8 } },
+  { name: 'Quantum Boost', cost: 5000000, type: 'Quantum Extractor', multi: 2, unlock: { building: 'Tiberium Rig', count: 5 } }
+];
+
+// --- Achievements ---
+const achievementTypes = [
+  { name: 'First Click', description: 'Perform your first harvest.', condition: () => game.totalClicks >= 1, reward: { type: 'tiberium', value: 25 } },
+  { name: 'Field Technician', description: 'Own 10 Harvesters.', condition: () => game.buildings.Harvester?.count >= 10, reward: { type: 'buildingBoost', building: 'Harvester', value: 1.25 } },
+  { name: 'Prestige Initiate', description: 'Reach 1 Prestige Crystal.', condition: () => game.prestige >= 1, reward: { type: 'clickPower', value: 3 } }
+];
+
+// --- Utilities ---
+function formatNum(value) { return numberFormatter.format(value); }
+function getTotalTps() { return buildingTypes.reduce((total, building) => total + getBuildingTps(building.name), 0); }
+function getBuildingTps(buildingName) { const bType = buildingTypes.find(b=>b.name===buildingName); const bState = game.buildings[buildingName]; return bType.tps*bState.count*game.buildingMultipliers[buildingName]*(1+game.prestige*0.1); }
+
+// --- Auth / Firebase ---
+function getCredentials() { return { email: document.getElementById('email').value.trim(), password: document.getElementById('password').value }; }
+function clearCredentials() { document.getElementById('password').value=''; }
+function ensureLoggedIn() { if(currentUid) return true; alert('Login first.'); return false; }
+function updateAuthStatus() { const s=document.getElementById('authStatus'); const u=auth.currentUser; s.textContent=u?`Logged in as ${u.email}. Progress saves to Firebase.`:'Not logged in. Create an account or login to save progress.'; }
+
+async function loadCloudSave(uid) {
+  const saveDoc=await getDoc(doc(db,'clickerSaves',uid));
+  if(saveDoc.exists()) game=normalizeGame(saveDoc.data());
+  else game=createDefaultGame();
+  ensureGameModel();
+  update();
+  queueSave();
+  updateLeaderboard();
+}
+async function saveNow() { if(!currentUid) return await setDoc(doc(db,'clickerSaves',currentUid),game); }
+function queueSave() { if(!currentUid) return; clearTimeout(saveTimeout); saveTimeout=setTimeout(async()=>await saveNow(),300); }
+
+window.createAccount = async function(){const {email,password}=getCredentials();if(!email||!password){alert('Enter both email/password.');return;}try{await createUserWithEmailAndPassword(auth,email,password);clearCredentials();}catch(e){alert(e.message||'Error');}};
+window.login = async function(){const {email,password}=getCredentials();if(!email||!password){alert('Enter both email/password.');return;}try{await signInWithEmailAndPassword(auth,email,password);clearCredentials();}catch(e){alert(e.message||'Error');}};
+window.logout = async function(){await signOut(auth);};
+
+// --- Click / Buy / Prestige ---
+window.clickTiberium = function(){
+  if(!ensureLoggedIn()) return;
+  const gain = game.clickPower*(1+game.prestige*0.1);
+  game.tiberium+=gain; game.totalEarned+=gain; game.totalClicks+=1;
+  showFloating('+ '+formatNum(gain));
+  update(); queueSave(); updateLeaderboard();
+};
+
+window.buyBuilding = function(name){
+  if(!ensureLoggedIn()) return;
+  const b=game.buildings[name]; if(game.tiberium>=b.cost){game.tiberium-=b.cost; b.count+=1; b.cost=Math.floor(b.cost*1.15); update(); queueSave(); updateLeaderboard(); }
+};
+
+window.buyUpgrade = function(name){
+  if(!ensureLoggedIn()) return;
+  const u=upgradeTypes.find(u=>u.name===name); if(u && !game.upgrades[name] && game.tiberium>=u.cost && upgradeUnlocked(u)){
+    game.tiberium-=u.cost; game.upgrades[name]=true;
+    if(u.type==='click') game.clickPower*=u.multi;
+    else if(u.type==='all') buildingTypes.forEach(b=>game.buildingMultipliers[b.name]*=u.multi);
+    else game.buildingMultipliers[u.type]*=u.multi;
+    update(); queueSave();
   }
-}
+};
 
-async function createAccount() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  if(!email || !password) return alert('Enter both email/password.');
-  try {
-    const cred = await createUserWithEmailAndPassword(auth,email,password);
-    document.getElementById('password').value='';
-    currentUid = cred.user.uid;
-    // Show username prompt for new account
-    document.getElementById('usernameRow').classList.remove('hidden');
-    document.getElementById('loginRow').classList.add('hidden');
-  } catch(e) { alert(e.message||'Error'); }
-}
+window.prestigeReset=function(){ if(!ensureLoggedIn()) return; const crystals=Math.floor(game.totalEarned/10000); if(crystals>0){game=createDefaultGame(game.prestige+crystals); ensureGameModel(); update(); queueSave(); updateLeaderboard(); } };
+window.hardReset=function(){ if(!ensureLoggedIn()) return; if(confirm('Reset all progress?')){game=createDefaultGame(); ensureGameModel(); update(); queueSave(); updateLeaderboard(); } };
 
-async function login() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  if(!email || !password) return alert('Enter both email/password.');
-  try {
-    const cred = await signInWithEmailAndPassword(auth,email,password);
-    document.getElementById('password').value='';
-    currentUid = cred.user.uid;
-    await checkUsername();
-  } catch(e) { alert(e.message||'Error'); }
-}
-
-async function logout() {
-  await signOut(auth);
-  currentUid='';
-  currentUsername='';
-  document.getElementById('usernameRow').classList.add('hidden');
-  document.getElementById('loginRow').classList.remove('hidden');
-  updateAuthStatus();
-}
-
-async function saveUsername() {
-  const uname = document.getElementById('usernameInput').value.trim();
-  if(!uname) return alert('Enter a username.');
-  // Check uniqueness
-  const usersCol = collection(db,'users');
-  const q = query(usersCol, orderBy('username'));
-  const snap = await getDocs(usersCol);
-  let taken=false;
-  snap.forEach(doc=>{ if(doc.data().username?.toLowerCase()===uname.toLowerCase()) taken=true; });
-  if(taken) return alert('Username taken, pick another.');
-  await setDoc(doc(db,'users',currentUid),{username:uname});
-  currentUsername=uname;
-  document.getElementById('usernameRow').classList.add('hidden');
-  document.getElementById('loginRow').classList.remove('hidden');
-  updateAuthStatus();
-  loadCloudSave(currentUid);
-}
-
-async function checkUsername() {
-  const userDoc = await getDoc(doc(db,'users',currentUid));
-  if(userDoc.exists()) currentUsername = userDoc.data().username || '';
-  if(!currentUsername) {
-    document.getElementById('usernameRow').classList.remove('hidden');
-    document.getElementById('loginRow').classList.add('hidden');
-  }
-  updateAuthStatus();
+// --- Floating Tiberium ---
+function showFloating(text){
+  const btn=document.querySelector('.actions .primary');
+  const span=document.createElement('span'); span.className='floating-tiberium'; span.textContent=text;
+  btn.appendChild(span);
+  setTimeout(()=>span.remove(),800);
 }
 
 // --- Leaderboard ---
@@ -215,23 +509,72 @@ async function updateLeaderboard(){
   const q=query(collection(db,'clickerSaves'),orderBy('totalEarned','desc'),limit(10));
   const snap=await getDocs(q);
   const ul=document.getElementById('leaderboardList'); ul.innerHTML='';
-  for(const d of snap.docs){
-    const uid = d.id;
-    const userDoc = await getDoc(doc(db,'users',uid));
-    const name = userDoc.exists() ? userDoc.data().username || d.data().email || uid : d.data().email || uid;
-    const li = document.createElement('li');
-    li.textContent=`${name}: ${d.data().totalEarned||0}`;
-    ul.appendChild(li);
-  }
+  snap.forEach(doc=>{const li=document.createElement('li'); li.textContent=`${doc.data().email||doc.id}: ${formatNum(doc.data().totalEarned||0)}`; ul.appendChild(li);});
 }
 
-// --- Cloud Save (rest of game logic unchanged) ---
-// You can paste your existing game save/load, buildings, upgrades, clickTiberium functions here
-// Keep your setInterval for passive tiberium, wireRows(), update(), etc.
+// --- Helpers ---
+function ensureGameModel(){
+  buildingTypes.forEach(b=>{if(!game.buildings[b.name])game.buildings[b.name]={count:0,cost:b.base}; if(!game.buildingMultipliers[b.name]) game.buildingMultipliers[b.name]=1;});
+  upgradeTypes.forEach(u=>{if(game.upgrades[u.name]===undefined) game.upgrades[u.name]=false;});
+  achievementTypes.forEach(a=>{if(game.achievements[a.name]===undefined) game.achievements[a.name]=false;});
+}
+function upgradeUnlocked(u){if(!u.unlock) return true; const owned=game.buildings[u.unlock.building]?.count||0; return owned>=u.unlock.count;}
+function applyAchievementReward(a){if(!a.reward)return; switch(a.reward.type){case 'tiberium': game.tiberium+=a.reward.value; game.totalEarned+=a.reward.value; break; case 'clickPower': game.clickPower+=a.reward.value; break; case 'buildingBoost': game.buildingMultipliers[a.reward.building]*=a.reward.value; break; case 'allBuildingBoost': buildingTypes.forEach(b=>game.buildingMultipliers[b.name]*=a.reward.value); break;}}
 
-onAuthStateChanged(auth, async user => {
-  if(user){ currentUid=user.uid; await checkUsername(); loadCloudSave(user.uid); }
-  else { currentUid=''; currentUsername=''; updateAuthStatus(); }
+// --- Wire UI ---
+function wireRows(){
+  buildingTypes.forEach(b=>{const div=document.createElement('div'); div.id=`b-${b.name}`; div.className='row-item'; div.innerHTML=`<span>${b.name}<br>Owned: <strong class='count'>0</strong> · Boost: <strong class='boost'>x1</strong> · Cost: <strong class='cost'>0</strong></span><button onclick="buyBuilding('${b.name}')">Buy</button>`; document.getElementById('buildings').appendChild(div);});
+  upgradeTypes.forEach(u=>{const div=document.createElement('div'); div.id=`u-${u.name}`; div.className='row-item'; div.innerHTML=`<span>${u.name} (<strong>${formatNum(u.cost)}</strong>)<small class='lock-note'></small></span><button onclick="buyUpgrade('${u.name}')">Buy</button>`; document.getElementById('upgrades').appendChild(div);});
+  achievementTypes.forEach(a=>{const div=document.createElement('div'); div.id=`a-${a.name}`; div.className='row-item'; div.innerHTML=`<span>${a.name}<br><small>${a.description}</small></span>`; document.getElementById('achievements').appendChild(div);});
+}
+
+// --- Update ---
+function update(){
+  updateAuthStatus();
+  const canPlay=Boolean(currentUid);
+  document.getElementById('tiberium').textContent=formatNum(Math.floor(game.tiberium));
+  document.getElementById('clickPower').textContent=formatNum(game.clickPower);
+  document.getElementById('harvestPreview').textContent=formatNum(game.clickPower*(1+game.prestige*0.1));
+  document.getElementById('totalClicks').textContent=formatNum(game.totalClicks);
+  document.getElementById('totalEarned').textContent=formatNum(Math.floor(game.totalEarned));
+  document.getElementById('prestige').textContent=formatNum(game.prestige);
+
+  buildingTypes.forEach(b=>{
+    const row=document.getElementById(`b-${b.name}`);
+    const canAfford=game.tiberium>=game.buildings[b.name].cost;
+    row.querySelector('.count').textContent=formatNum(game.buildings[b.name].count);
+    row.querySelector('.boost').textContent=`x${formatNum(game.buildingMultipliers[b.name])}`;
+    row.querySelector('.cost').textContent=formatNum(game.buildings[b.name].cost);
+    row.querySelector('button').disabled=!canAfford||!canPlay;
+  });
+
+  const totalTPS=getTotalTps();
+  document.getElementById('tps').textContent=formatNum(Math.floor(totalTPS));
+
+  upgradeTypes.forEach(u=>{
+    const row=document.getElementById(`u-${u.name}`);
+    if(game.upgrades[u.name]) row.style.display='none';
+    else{row.style.display='flex'; const unlocked=upgradeUnlocked(u); row.querySelector('.lock-note').textContent=unlocked?'':`Requires ${u.unlock?.count} ${u.unlock?.building}(s)`; row.querySelector('button').disabled=game.tiberium<u.cost||!canPlay||!unlocked;}
+  });
+
+  achievementTypes.forEach(a=>{
+    const row=document.getElementById(`a-${a.name}`);
+    if(!game.achievements[a.name] && a.condition()){game.achievements[a.name]=true; applyAchievementReward(a);}
+    if(game.achievements[a.name]){row.classList.add('achievement-earned'); row.innerHTML=`<span>✔ ${a.name}<br><small>${a.description}</small></span>`;}
+  });
+}
+
+// --- Passive Tiberium ---
+setInterval(()=>{
+  if(!currentUid) return;
+  buildingTypes.forEach(b=>{const gain=getBuildingTps(b.name); game.tiberium+=gain; game.totalEarned+=gain;});
+  update(); queueSave(); updateLeaderboard();
+},1000);
+
+wireRows(); ensureGameModel(); update();
+
+onAuthStateChanged(auth,async user=>{
+  if(user){currentUid=user.uid; await loadCloudSave(user.uid);} else{currentUid=''; game=createDefaultGame(); ensureGameModel(); update();}
 });
 </script>
 </body>
