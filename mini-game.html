@@ -65,44 +65,6 @@ h1 {
   position: relative;
 }
 
-.howto-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  background: rgba(4, 8, 5, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.howto-panel {
-  width: min(100%, 640px);
-}
-
-.howto-title {
-  margin: 0 0 0.55rem;
-  color: var(--accent);
-}
-
-.howto-modal p,
-.howto-modal li {
-  color: #cce7cc;
-}
-
-.howto-modal ul {
-  margin: 0.65rem 0 1rem;
-  padding-left: 1.2rem;
-}
-
-.howto-close {
-  min-width: 180px;
-}
-
-.hidden {
-  display: none;
-}
-
 .auth-panel { margin-bottom: 1rem; }
 .auth-title {
   margin: 0 0 0.35rem;
@@ -381,46 +343,157 @@ let currentUid = '';
 let saveTimeout = 0;
 let currentUsername = '';
 
-// --------------------
-// All your existing game logic remains unchanged
-// (createDefaultGame, normalizeGame, buildings/upgrades/achievements, click/buy/prestige/hard reset, floating tiberium, leaderboard logic, passive tiberium, wireRows, update)
-// --------------------
+// ==================== GAME DATA & FUNCTIONS ====================
 
-// --- Username support ---
-window.createAccount = async function() {
-  const { email, password } = getCredentials();
-  const username = document.getElementById('username').value.trim();
-  if(!email || !password || !username) { alert('Enter email, password, AND username.'); return; }
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    currentUid = cred.user.uid;
-    currentUsername = username;
-    await setDoc(doc(db, 'users', currentUid), { username });
-    clearCredentials();
-  } catch(e) { alert(e.message || 'Error'); }
+function createDefaultGame() {
+  return {
+    tiberium: 0,
+    totalClicks: 0,
+    totalEarned: 0,
+    clickPower: 1,
+    prestigePoints: 0,
+    lastUpdateTime: Date.now(),
+    buildings: [
+      { id: 'harvester', name: 'Harvester', cost: 10, owned: 0, production: 1, description: 'Slowly harvests Tiberium' },
+      { id: 'refinery', name: 'Refinery', cost: 100, owned: 0, production: 10, description: 'Processes raw Tiberium' },
+      { id: 'infantry', name: 'Infantry', cost: 1000, owned: 0, production: 100, description: 'Military unit production' },
+      { id: 'tank', name: 'Tank', cost: 10000, owned: 0, production: 1000, description: 'Heavy armor division' },
+      { id: 'airfield', name: 'Airfield', cost: 100000, owned: 0, production: 10000, description: 'Air superiority' }
+    ],
+    upgrades: [
+      { id: 'sharpclick', name: 'Sharp Clicks', cost: 50, owned: 0, multiplier: 1.2, description: 'Increase click power by 20%', type: 'click' },
+      { id: 'efficiency', name: 'Efficiency Module', cost: 500, owned: 0, multiplier: 1.15, description: 'Buildings produce 15% more', type: 'production' },
+      { id: 'ionbeam', name: 'Ion Beam', cost: 5000, owned: 0, multiplier: 1.25, description: 'Advanced harvesting +25%', type: 'production' }
+    ],
+    achievements: [
+      { id: 'first_harvest', name: 'First Harvest', description: 'Harvest 100 Tiberium', requirement: 100, type: 'totalEarned', earned: false },
+      { id: 'industrialist', name: 'Industrialist', description: 'Own 10 total buildings', requirement: 10, type: 'buildings', earned: false },
+      { id: 'billionaire', name: 'Billionaire', description: 'Earn 1,000,000 Tiberium', requirement: 1000000, type: 'totalEarned', earned: false },
+      { id: 'clicker', name: 'Clicker', description: 'Click 10,000 times', requirement: 10000, type: 'totalClicks', earned: false }
+    ]
+  };
+}
+
+function normalizeGame(g) {
+  const def = createDefaultGame();
+  g.buildings = g.buildings || [];
+  g.upgrades = g.upgrades || [];
+  g.achievements = g.achievements || [];
+  for (let b of def.buildings) {
+    if (!g.buildings.find(x => x.id === b.id)) g.buildings.push({ ...b });
+  }
+  for (let u of def.upgrades) {
+    if (!g.upgrades.find(x => x.id === u.id)) g.upgrades.push({ ...u });
+  }
+  for (let a of def.achievements) {
+    if (!g.achievements.find(x => x.id === a.id)) g.achievements.push({ ...a });
+  }
+  return g;
+}
+
+function formatNum(n) {
+  if (n >= 1e9) return numberFormatter.format(n / 1e9) + 'B';
+  if (n >= 1e6) return numberFormatter.format(n / 1e6) + 'M';
+  if (n >= 1e3) return numberFormatter.format(n / 1e3) + 'K';
+  return Math.floor(n).toString();
+}
+
+function getTotalBuildingCount() {
+  return game.buildings.reduce((sum, b) => sum + (b.owned || 0), 0);
+}
+
+function getProductionPerSecond() {
+  let pps = 0;
+  for (let b of game.buildings) {
+    let prod = b.production || 0;
+    for (let u of game.upgrades) {
+      if (u.owned && u.type === 'production') prod *= u.multiplier;
+    }
+    pps += prod * (b.owned || 0);
+  }
+  return pps * (1 + game.prestigePoints * 0.1);
+}
+
+window.clickTiberium = function() {
+  let power = game.clickPower;
+  for (let u of game.upgrades) {
+    if (u.owned && u.type === 'click') power *= u.multiplier;
+  }
+  power *= (1 + game.prestigePoints * 0.1);
+  game.tiberium += power;
+  game.totalClicks += 1;
+  game.totalEarned += power;
+  checkAchievements();
+  scheduleUpdate();
 };
 
-window.login = async function() {
-  const { email, password } = getCredentials();
-  if(!email || !password) { alert('Enter both email/password.'); return; }
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    currentUid = cred.user.uid;
-    const uDoc = await getDoc(doc(db, 'users', currentUid));
-    currentUsername = uDoc.exists() ? uDoc.data().username || cred.user.email : cred.user.email;
-    clearCredentials();
-  } catch(e) { alert(e.message || 'Error'); }
+window.buyBuilding = function(id) {
+  let b = game.buildings.find(x => x.id === id);
+  if (!b) return;
+  if (game.tiberium >= b.cost) {
+    game.tiberium -= b.cost;
+    b.owned = (b.owned || 0) + 1;
+    b.cost = Math.ceil(b.cost * 1.12);
+    checkAchievements();
+    scheduleUpdate();
+  }
 };
 
-window.logout = async function() {
-  await signOut(auth);
+window.buyUpgrade = function(id) {
+  let u = game.upgrades.find(x => x.id === id);
+  if (!u) return;
+  if (game.tiberium >= u.cost) {
+    game.tiberium -= u.cost;
+    u.owned = (u.owned || 0) + 1;
+    u.cost = Math.ceil(u.cost * 1.15);
+    checkAchievements();
+    scheduleUpdate();
+  }
 };
 
-// --- Update leaderboard to show username ---
+function checkAchievements() {
+  for (let a of game.achievements) {
+    if (a.earned) continue;
+    let unlocked = false;
+    if (a.type === 'totalEarned' && game.totalEarned >= a.requirement) unlocked = true;
+    if (a.type === 'totalClicks' && game.totalClicks >= a.requirement) unlocked = true;
+    if (a.type === 'buildings' && getTotalBuildingCount() >= a.requirement) unlocked = true;
+    if (unlocked) a.earned = true;
+  }
+}
+
+window.prestigeReset = function() {
+  if (game.totalEarned < 1000) { alert('Need 1,000 total earned to prestige.'); return; }
+  const prestigeGain = Math.floor(Math.sqrt(game.totalEarned / 1000));
+  game.prestigePoints += prestigeGain;
+  game = createDefaultGame();
+  game.prestigePoints += prestigeGain;
+  game = normalizeGame(game);
+  scheduleUpdate();
+};
+
+window.hardReset = function() {
+  if (!confirm('Are you SURE? This resets everything and costs all prestige!')) return;
+  game = createDefaultGame();
+  game = normalizeGame(game);
+  scheduleUpdate();
+};
+
+function createFloatingText(amount, x, y) {
+  let el = document.createElement('div');
+  el.className = 'floating-tiberium';
+  el.textContent = '+' + formatNum(amount);
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  document.querySelector('.actions').appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
 async function updateLeaderboard() {
   const q = query(collection(db,'clickerSaves'), orderBy('totalEarned','desc'), limit(10));
   const snap = await getDocs(q);
-  const ul = document.getElementById('leaderboardList'); ul.innerHTML = '';
+  const ul = document.getElementById('leaderboardList'); 
+  ul.innerHTML = '';
   for(const docSnap of snap.docs) {
     const uid = docSnap.id;
     const saveData = docSnap.data();
@@ -432,14 +505,200 @@ async function updateLeaderboard() {
   }
 }
 
-// --- Auth status shows username if available ---
-function updateAuthStatus() {
-  const s = document.getElementById('authStatus');
-  if(auth.currentUser) s.textContent = `Logged in as ${currentUsername || auth.currentUser.email}. Progress saves to Firebase.`;
-  else s.textContent = 'Not logged in. Create an account or login to save progress.';
+function wireRows() {
+  // Buildings
+  const bDiv = document.getElementById('buildings');
+  bDiv.innerHTML = '';
+  for (let b of game.buildings) {
+    const canAfford = game.tiberium >= b.cost;
+    const item = document.createElement('div');
+    item.className = 'row-item';
+    item.innerHTML = `<div><strong>${b.name}</strong><span>${b.owned}</span><br><span class="lock-note">${b.description}</span></div><button ${canAfford ? '' : 'disabled'}>${formatNum(b.cost)}</button>`;
+    item.querySelector('button').onclick = () => { window.buyBuilding(b.id); };
+    bDiv.appendChild(item);
+  }
+
+  // Upgrades
+  const uDiv = document.getElementById('upgrades');
+  uDiv.innerHTML = '';
+  for (let u of game.upgrades) {
+    const canAfford = game.tiberium >= u.cost;
+    const item = document.createElement('div');
+    item.className = 'row-item';
+    item.innerHTML = `<div><strong>${u.name}</strong><span>${u.owned}</span><br><span class="lock-note">${u.description}</span></div><button ${canAfford ? '' : 'disabled'}>${formatNum(u.cost)}</button>`;
+    item.querySelector('button').onclick = () => { window.buyUpgrade(u.id); };
+    uDiv.appendChild(item);
+  }
+
+  // Achievements
+  const aDiv = document.getElementById('achievements');
+  aDiv.innerHTML = '';
+  for (let a of game.achievements) {
+    const item = document.createElement('div');
+    item.className = 'row-item' + (a.earned ? ' achievement-earned' : '');
+    item.innerHTML = `<div><strong>${a.name}</strong><br><span class="lock-note">${a.description}</span></div>`;
+    aDiv.appendChild(item);
+  }
 }
 
-// --- Keep the rest of your game logic exactly the same ---
+function update() {
+  const now = Date.now();
+  const delta = (now - game.lastUpdateTime) / 1000;
+  game.lastUpdateTime = now;
+
+  const pps = getProductionPerSecond();
+  game.tiberium += pps * delta;
+  game.totalEarned += pps * delta;
+
+  document.getElementById('tiberium').textContent = formatNum(game.tiberium);
+  document.getElementById('tps').textContent = formatNum(pps);
+  document.getElementById('prestige').textContent = game.prestigePoints;
+  document.getElementById('totalClicks').textContent = formatNum(game.totalClicks);
+  document.getElementById('totalEarned').textContent = formatNum(game.totalEarned);
+
+  let clickPower = game.clickPower;
+  for (let u of game.upgrades) {
+    if (u.owned && u.type === 'click') clickPower *= u.multiplier;
+  }
+  clickPower *= (1 + game.prestigePoints * 0.1);
+  document.getElementById('clickPower').textContent = formatNum(clickPower);
+  document.getElementById('harvestPreview').textContent = formatNum(clickPower);
+
+  wireRows();
+}
+
+function scheduleUpdate() {
+  clearTimeout(saveTimeout);
+  update();
+  saveTimeout = setTimeout(saveToDB, 1000);
+}
+
+async function saveToDB() {
+  if (!auth.currentUser) return;
+  try {
+    const gameData = {
+      ...game,
+      lastUpdateTime: Date.now()
+    };
+    await setDoc(doc(db, 'clickerSaves', auth.currentUser.uid), gameData);
+    await updateLeaderboard();
+  } catch (e) {
+    console.error('Save error:', e);
+  }
+}
+
+async function loadFromDB() {
+  if (!auth.currentUser) return false;
+  try {
+    const docSnap = await getDoc(doc(db, 'clickerSaves', auth.currentUser.uid));
+    if (docSnap.exists()) {
+      game = normalizeGame(docSnap.data());
+      game.lastUpdateTime = Date.now();
+      update();
+      return true;
+    }
+  } catch (e) {
+    console.error('Load error:', e);
+  }
+  return false;
+}
+
+// ==================== AUTHENTICATION ====================
+
+function getCredentials() {
+  return {
+    email: document.getElementById('email').value.trim(),
+    password: document.getElementById('password').value.trim()
+  };
+}
+
+function clearCredentials() {
+  document.getElementById('email').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('username').value = '';
+}
+
+window.createAccount = async function() {
+  const { email, password } = getCredentials();
+  const username = document.getElementById('username').value.trim();
+  if (!email || !password || !username) {
+    alert('Enter email, password, AND username.');
+    return;
+  }
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    currentUid = cred.user.uid;
+    currentUsername = username;
+    await setDoc(doc(db, 'users', currentUid), { username });
+    clearCredentials();
+    updateAuthStatus();
+    await loadFromDB();
+  } catch (e) {
+    alert(e.message || 'Error');
+  }
+};
+
+window.login = async function() {
+  const { email, password } = getCredentials();
+  if (!email || !password) {
+    alert('Enter both email/password.');
+    return;
+  }
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    currentUid = cred.user.uid;
+    const uDoc = await getDoc(doc(db, 'users', currentUid));
+    currentUsername = uDoc.exists() ? uDoc.data().username || cred.user.email : cred.user.email;
+    clearCredentials();
+    updateAuthStatus();
+    await loadFromDB();
+  } catch (e) {
+    alert(e.message || 'Error');
+  }
+};
+
+window.logout = async function() {
+  await signOut(auth);
+  currentUid = '';
+  currentUsername = '';
+  game = createDefaultGame();
+  game = normalizeGame(game);
+  updateAuthStatus();
+  update();
+};
+
+function updateAuthStatus() {
+  const s = document.getElementById('authStatus');
+  if (auth.currentUser) {
+    s.textContent = `Logged in as ${currentUsername || auth.currentUser.email}. Progress saves to Firebase.`;
+  } else {
+    s.textContent = 'Not logged in. Create an account or login to save progress.';
+  }
+}
+
+// ==================== INITIALIZATION ====================
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUid = user.uid;
+    const uDoc = await getDoc(doc(db, 'users', user.uid));
+    currentUsername = uDoc.exists() ? uDoc.data().username || user.email : user.email;
+    updateAuthStatus();
+    await loadFromDB();
+  } else {
+    currentUid = '';
+    currentUsername = '';
+    game = createDefaultGame();
+    game = normalizeGame(game);
+    updateAuthStatus();
+    update();
+  }
+});
+
+game = normalizeGame(game);
+update();
+setInterval(update, 100);
+
 </script>
 </body>
 </html>
