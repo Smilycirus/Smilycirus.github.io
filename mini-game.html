@@ -13,6 +13,7 @@
   --muted: #9fb39f;
   --accent: #7CFF7C;
   --border: #223527;
+  --success: #89f5db;
 }
 
 * { box-sizing: border-box; }
@@ -205,6 +206,23 @@ button:disabled {
   color: #89f5db;
 }
 
+.upgrade-purchased {
+  border-color: #226f58;
+  background: #0b1715;
+  color: #89f5db;
+  opacity: 0.8;
+}
+
+.upgrade-purchased button {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.upgrade-purchased button:hover {
+  transform: none;
+  border-color: #2f4a35;
+}
+
 .footer-note {
   margin-top: 1rem;
   color: var(--muted);
@@ -246,6 +264,14 @@ button:disabled {
 #leaderboard li {
   margin-bottom: 0.25rem;
   color: #cce7cc;
+}
+
+.subsection-title {
+  margin: 0.8rem 0 0.4rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  border-bottom: 1px solid #2b4631;
+  padding-bottom: 0.3rem;
 }
 
 @media (max-width: 900px) {
@@ -298,7 +324,9 @@ button:disabled {
 
       <article class="panel">
         <h2 class="section-title">Upgrades</h2>
-        <div id="upgrades" class="list"></div>
+        <div id="upgradesAvailable" class="list"></div>
+        <h3 class="subsection-title" id="purchasedUpgradesLabel" style="display: none;">Purchased</h3>
+        <div id="upgradesPurchased" class="list"></div>
       </article>
 
       <article class="panel">
@@ -312,7 +340,7 @@ button:disabled {
       <ul id="leaderboardList"></ul>
     </section>
 
-    <p class="footer-note">Tip: Prestige gives a permanent bonus to clicking and building production.</p>
+    <p class="footer-note">Tip: Prestige gives a permanent bonus to clicking and building production. Each upgrade can only be purchased once.</p>
   </main>
 </div>
 
@@ -452,7 +480,8 @@ function getProductionPerSecond() {
   for (let b of game.buildings) {
     let prod = b.production || 0;
     for (let u of game.upgrades) {
-      if (u.owned && u.type === 'production') prod *= u.multiplier;
+      // Apply each owned upgrade's multiplier once (not multiplicatively stacked)
+      if (u.owned > 0 && u.type === 'production') prod *= u.multiplier;
     }
     pps += prod * (b.owned || 0);
   }
@@ -462,7 +491,8 @@ function getProductionPerSecond() {
 window.clickTiberium = function() {
   let power = game.clickPower;
   for (let u of game.upgrades) {
-    if (u.owned && u.type === 'click') power *= u.multiplier;
+    // Apply each owned click upgrade's multiplier once
+    if (u.owned > 0 && u.type === 'click') power *= u.multiplier;
   }
   power *= (1 + game.prestigePoints * 0.1);
   game.tiberium += power;
@@ -487,10 +517,16 @@ window.buyBuilding = function(id) {
 window.buyUpgrade = function(id) {
   let u = game.upgrades.find(x => x.id === id);
   if (!u) return;
+  
+  // Check if upgrade already owned
+  if (u.owned > 0) {
+    alert(`${u.name} has already been purchased. Each upgrade can only be bought once.`);
+    return;
+  }
+  
   if (game.tiberium >= u.cost) {
     game.tiberium -= u.cost;
-    u.owned = (u.owned || 0) + 1;
-    u.cost = Math.ceil(u.cost * 1.15);
+    u.owned = 1; // Set to 1, not increment (single purchase only)
     checkAchievements();
     scheduleUpdate();
   }
@@ -562,15 +598,37 @@ function wireRows() {
     bDiv.appendChild(item);
   }
 
-  const uDiv = document.getElementById('upgrades');
-  uDiv.innerHTML = '';
-  for (let u of game.upgrades) {
+  // Split upgrades into available and purchased
+  const availableUpgrades = game.upgrades.filter(u => u.owned === 0);
+  const purchasedUpgrades = game.upgrades.filter(u => u.owned > 0);
+
+  const uAvailableDiv = document.getElementById('upgradesAvailable');
+  uAvailableDiv.innerHTML = '';
+  for (let u of availableUpgrades) {
     const canAfford = game.tiberium >= u.cost;
     const item = document.createElement('div');
     item.className = 'row-item';
-    item.innerHTML = `<div><strong>${u.name}</strong><span>${u.owned}</span><br><span class="lock-note">${u.description}</span></div><button ${canAfford ? '' : 'disabled'}>${formatNum(u.cost)}</button>`;
+    item.innerHTML = `<div><strong>${u.name}</strong><br><span class="lock-note">${u.description}</span></div><button ${canAfford ? '' : 'disabled'}>${formatNum(u.cost)}</button>`;
     item.querySelector('button').onclick = () => { window.buyUpgrade(u.id); };
-    uDiv.appendChild(item);
+    uAvailableDiv.appendChild(item);
+  }
+
+  // Show purchased upgrades in separate section
+  const uPurchasedDiv = document.getElementById('upgradesPurchased');
+  const purchasedLabel = document.getElementById('purchasedUpgradesLabel');
+  
+  if (purchasedUpgrades.length > 0) {
+    purchasedLabel.style.display = 'block';
+    uPurchasedDiv.innerHTML = '';
+    for (let u of purchasedUpgrades) {
+      const item = document.createElement('div');
+      item.className = 'row-item upgrade-purchased';
+      item.innerHTML = `<div><strong>${u.name}</strong><br><span class="lock-note">${u.description} ✓</span></div><button disabled>Owned</button>`;
+      uPurchasedDiv.appendChild(item);
+    }
+  } else {
+    purchasedLabel.style.display = 'none';
+    uPurchasedDiv.innerHTML = '';
   }
 
   const aDiv = document.getElementById('achievements');
@@ -600,7 +658,7 @@ function update() {
 
   let clickPower = game.clickPower;
   for (let u of game.upgrades) {
-    if (u.owned && u.type === 'click') clickPower *= u.multiplier;
+    if (u.owned > 0 && u.type === 'click') clickPower *= u.multiplier;
   }
   clickPower *= (1 + game.prestigePoints * 0.1);
   document.getElementById('clickPower').textContent = formatNum(clickPower);
