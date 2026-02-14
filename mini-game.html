@@ -62,6 +62,7 @@ h1 {
   border-radius: 14px;
   padding: 1rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  position: relative;
 }
 
 .howto-modal {
@@ -144,6 +145,7 @@ h1 {
   border: 1px solid #1d3023;
   border-radius: 10px;
   padding: 0.75rem;
+  position: relative;
 }
 
 .stat-label {
@@ -162,6 +164,7 @@ h1 {
   flex-wrap: wrap;
   gap: 0.7rem;
   margin-bottom: 1rem;
+  position: relative;
 }
 
 button {
@@ -244,73 +247,115 @@ button:disabled {
   font-size: 0.9rem;
 }
 
+.floating-tiberium {
+  position: absolute;
+  color: #7CFF7C;
+  font-weight: 700;
+  animation: floatUp 0.8s ease-out forwards;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-50px); opacity: 0; }
+}
+
+#leaderboard {
+  margin-top: 1rem;
+  border: 1px solid #38553f;
+  border-radius: 10px;
+  padding: 0.7rem;
+  background: #0d140f;
+}
+
+#leaderboard h2 {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+}
+
+#leaderboard ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+#leaderboard li {
+  margin-bottom: 0.25rem;
+  color: #cce7cc;
+}
+
 @media (max-width: 900px) {
   .content-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="top">
-      <a class="back-link" href="index.html">← Back to Home</a>
-      <h1>Tiberium Clicker</h1>
-    </div>
-
-    <main class="panel">
-      <section class="panel auth-panel" aria-label="Account controls">
-        <h2 class="auth-title">Account (Firebase)</h2>
-        <p class="auth-status" id="authStatus">Not logged in</p>
-        <div class="auth-row">
-          <input id="email" type="email" autocomplete="username" placeholder="Email" aria-label="Email">
-          <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
-          <button onclick="createAccount()">Create Account</button>
-          <button onclick="login()">Login</button>
-          <button onclick="logout()">Logout</button>
-        </div>
-        <p class="auth-note">Account and save data are stored in Firebase. You must login to play/save.</p>
-      </section>
-
-      <section class="stats-grid" aria-label="Game stats">
-        <div class="stat"><div class="stat-label">Tiberium</div><div class="stat-value" id="tiberium">0</div></div>
-        <div class="stat"><div class="stat-label">TPS</div><div class="stat-value" id="tps">0</div></div>
-        <div class="stat"><div class="stat-label">Prestige Crystals</div><div class="stat-value" id="prestige">0</div></div>
-        <div class="stat"><div class="stat-label">Click Power</div><div class="stat-value" id="clickPower">1</div></div>
-        <div class="stat"><div class="stat-label">Total Clicks</div><div class="stat-value" id="totalClicks">0</div></div>
-        <div class="stat"><div class="stat-label">Total Earned</div><div class="stat-value" id="totalEarned">0</div></div>
-      </section>
-
-      <section class="actions">
-        <button class="primary" onclick="clickTiberium()">Harvest (+<span id="harvestPreview">1</span>)</button>
-        <button onclick="prestigeReset()">Prestige Reset</button>
-        <button onclick="hardReset()">Full Reset</button>
-      </section>
-
-      <section class="content-grid">
-        <article class="panel">
-          <h2 class="section-title">Buildings</h2>
-          <div id="buildings" class="list"></div>
-        </article>
-
-        <article class="panel">
-          <h2 class="section-title">Upgrades</h2>
-          <div id="upgrades" class="list"></div>
-        </article>
-
-        <article class="panel">
-          <h2 class="section-title">Achievements</h2>
-          <div id="achievements" class="list"></div>
-        </article>
-      </section>
-
-      <p class="footer-note">Tip: Prestige gives a permanent bonus to clicking and building production.</p>
-    </main>
+<div class="wrap">
+  <div class="top">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h1>Tiberium Clicker</h1>
   </div>
+
+  <main class="panel">
+    <section class="panel auth-panel" aria-label="Account controls">
+      <h2 class="auth-title">Account (Firebase)</h2>
+      <p class="auth-status" id="authStatus">Not logged in</p>
+      <div class="auth-row">
+        <input id="email" type="email" autocomplete="username" placeholder="Email" aria-label="Email">
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
+        <button onclick="createAccount()">Create Account</button>
+        <button onclick="login()">Login</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+      <p class="auth-note">Account and save data are stored in Firebase. You must login to play/save.</p>
+    </section>
+
+    <section class="stats-grid" aria-label="Game stats">
+      <div class="stat"><div class="stat-label">Tiberium</div><div class="stat-value" id="tiberium">0</div></div>
+      <div class="stat"><div class="stat-label">TPS</div><div class="stat-value" id="tps">0</div></div>
+      <div class="stat"><div class="stat-label">Prestige Crystals</div><div class="stat-value" id="prestige">0</div></div>
+      <div class="stat"><div class="stat-label">Click Power</div><div class="stat-value" id="clickPower">1</div></div>
+      <div class="stat"><div class="stat-label">Total Clicks</div><div class="stat-value" id="totalClicks">0</div></div>
+      <div class="stat"><div class="stat-label">Total Earned</div><div class="stat-value" id="totalEarned">0</div></div>
+    </section>
+
+    <section class="actions">
+      <button class="primary" onclick="clickTiberium()">Harvest (+<span id="harvestPreview">1</span>)</button>
+      <button onclick="prestigeReset()">Prestige Reset</button>
+      <button onclick="hardReset()">Full Reset</button>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <h2 class="section-title">Buildings</h2>
+        <div id="buildings" class="list"></div>
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Upgrades</h2>
+        <div id="upgrades" class="list"></div>
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Achievements</h2>
+        <div id="achievements" class="list"></div>
+      </article>
+    </section>
+
+    <section id="leaderboard" class="panel">
+      <h2>Top 10 Players</h2>
+      <ul id="leaderboardList"></ul>
+    </section>
+
+    <p class="footer-note">Tip: Prestige gives a permanent bonus to clicking and building production.</p>
+  </main>
+</div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDC2abQAAaQSxYxZ7g3_OKqQqlqPHCPyu4',
@@ -330,6 +375,7 @@ const db = getFirestore(app);
 const numberFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
 const LEGACY_SAVE_KEY = 'tibSave';
 
+// --- Game Setup ---
 function createDefaultGame(prestige = 0) {
   return {
     tiberium: 0,
@@ -363,13 +409,16 @@ let game = createDefaultGame();
 let currentUid = '';
 let saveTimeout = 0;
 
+// --- Buildings / Upgrades / Achievements ---
 const buildingTypes = [
   { name: 'Harvester', base: 10, tps: 1 },
   { name: 'Refinery', base: 100, tps: 8 },
   { name: 'Lab', base: 1000, tps: 47 },
   { name: 'Crystal Mine', base: 10000, tps: 260 },
   { name: 'Temple Reactor', base: 70000, tps: 1450 },
-  { name: 'Tiberium Rig', base: 350000, tps: 7800 }
+  { name: 'Tiberium Rig', base: 350000, tps: 7800 },
+  { name: 'Quantum Extractor', base: 1200000, tps: 25000 },
+  { name: 'Dimensional Core', base: 5000000, tps: 120000 }
 ];
 
 const upgradeTypes = [
@@ -380,370 +429,152 @@ const upgradeTypes = [
   { name: 'Crystal Compression', cost: 60000, type: 'Crystal Mine', multi: 2, unlock: { building: 'Lab', count: 6 } },
   { name: 'Temple Overclock', cost: 175000, type: 'Temple Reactor', multi: 2, unlock: { building: 'Crystal Mine', count: 4 } },
   { name: 'Global Logistics', cost: 520000, type: 'all', multi: 1.25, unlock: { building: 'Temple Reactor', count: 3 } },
-  { name: 'Rig Swarm Protocol', cost: 1500000, type: 'Tiberium Rig', multi: 2, unlock: { building: 'Temple Reactor', count: 8 } } ,
-
+  { name: 'Rig Swarm Protocol', cost: 1500000, type: 'Tiberium Rig', multi: 2, unlock: { building: 'Temple Reactor', count: 8 } },
+  { name: 'Quantum Boost', cost: 5000000, type: 'Quantum Extractor', multi: 2, unlock: { building: 'Tiberium Rig', count: 5 } }
 ];
 
+// --- Achievements ---
 const achievementTypes = [
   { name: 'First Click', description: 'Perform your first harvest.', condition: () => game.totalClicks >= 1, reward: { type: 'tiberium', value: 25 } },
-  { name: 'Field Technician', description: 'Own 10 Harvesters.', condition: () => game.buildings.Harvester?.cunt >= 10, reward: { type: 'buildingBoost', building: 'Harvester', value: 1.25 } },
-  { name: '100 Tiberium', description: 'Earn 100 total Tiberium.', condition: () => game.totalEarned >= 100, reward: { type: 'clickPower', value: 1 } },
-  { name: '1000 Tiberium', description: 'Earn 1,000 total Tiberium.', condition: () => game.totalEarned >= 1000, reward: { type: 'tiberium', value: 250 } },
-  { name: 'Industrial Core', description: 'Own 5 Refineries and 3 Labs.', condition: () => game.buildings.Refinery?.count >= 5 && game.buildings.Lab?.count >= 3, reward: { type: 'buildingBoost', building: 'Refinery', value: 1.2 } },
-  { name: 'Crystal Engineer', description: 'Own 5 Crystal Mines.', condition: () => game.buildings['Crystal Mine']?.count >= 5, reward: { type: 'buildingBoost', building: 'Crystal Mine', value: 1.25 } },
-  { name: 'Prestige Initiate', description: 'Reach 1 Prestige Crystal.', condition: () => game.prestige >= 1, reward: { type: 'clickPower', value: 3 } },
-  { name: 'War Economy', description: 'Reach 1,000 TPS.', condition: () => getTotalTps() >= 1000, reward: { type: 'allBuildingBoost', value: 1.1 } },
-  { name: 'Tiberium Baron', description: 'Earn 1,000,000 total Tiberium.', condition: () => game.totalEarned >= 1000000, reward: { type: 'tiberium', value: 150000 } }
+  { name: 'Field Technician', description: 'Own 10 Harvesters.', condition: () => game.buildings.Harvester?.count >= 10, reward: { type: 'buildingBoost', building: 'Harvester', value: 1.25 } },
+  { name: 'Prestige Initiate', description: 'Reach 1 Prestige Crystal.', condition: () => game.prestige >= 1, reward: { type: 'clickPower', value: 3 } }
 ];
 
-function ensureGameModel() {
-  buildingTypes.forEach((building) => {
-    if (!game.buildings[building.name]) {
-      game.buildings[building.name] = { count: 0, cost: building.base };
-    }
-    if (!game.buildingMultipliers[building.name]) {
-      game.buildingMultipliers[building.name] = 1;
-    }
-  });
+// --- Utilities ---
+function formatNum(value) { return numberFormatter.format(value); }
+function getTotalTps() { return buildingTypes.reduce((total, building) => total + getBuildingTps(building.name), 0); }
+function getBuildingTps(buildingName) { const bType = buildingTypes.find(b=>b.name===buildingName); const bState = game.buildings[buildingName]; return bType.tps*bState.count*game.buildingMultipliers[buildingName]*(1+game.prestige*0.1); }
 
-  upgradeTypes.forEach((upgrade) => {
-    if (!Object.prototype.hasOwnProperty.call(game.upgrades, upgrade.name)) {
-      game.upgrades[upgrade.name] = false;
-    }
-  });
-
-  achievementTypes.forEach((achievement) => {
-    if (!Object.prototype.hasOwnProperty.call(game.achievements, achievement.name)) {
-      game.achievements[achievement.name] = false;
-    }
-  });
-}
-
-function wireRows() {
-  buildingTypes.forEach((building) => {
-    const div = document.createElement('div');
-    div.id = `b-${building.name}`;
-    div.className = 'row-item';
-    div.innerHTML = `<span>${building.name}<br>Owned: <strong class='count'>0</strong> · Boost: <strong class='boost'>x1</strong> · Cost: <strong class='cost'>0</strong></span><button onclick="buyBuilding('${building.name}')">Buy</button>`;
-    document.getElementById('buildings').appendChild(div);
-  });
-
-  upgradeTypes.forEach((upgrade) => {
-    const div = document.createElement('div');
-    div.id = `u-${upgrade.name}`;
-    div.className = 'row-item';
-    div.innerHTML = `<span>${upgrade.name} (<strong>${numberFormatter.format(upgrade.cost)}</strong>)<small class="lock-note"></small></span><button onclick="buyUpgrade('${upgrade.name}')">Buy</button>`;
-    document.getElementById('upgrades').appendChild(div);
-  });
-
-  achievementTypes.forEach((achievement) => {
-    const div = document.createElement('div');
-    div.id = `a-${achievement.name}`;
-    div.className = 'row-item';
-    div.innerHTML = `<span>${achievement.name}<br><small>${achievement.description}</small></span>`;
-    document.getElementById('achievements').appendChild(div);
-  });
-}
-
-function getTotalTps() {
-  return buildingTypes.reduce((total, building) => total + getBuildingTps(building.name), 0);
-}
-
-function describeUnlockRequirement(unlock) {
-  if (!unlock) return '';
-  return `Requires ${unlock.count} ${unlock.building}(s)`;
-}
-
-function upgradeUnlocked(upgrade) {
-  if (!upgrade.unlock) return true;
-  const owned = game.buildings[upgrade.unlock.building]?.count || 0;
-  return owned >= upgrade.unlock.count;
-}
-
-function applyAchievementReward(achievement) {
-  if (!achievement.reward) return;
-
-  switch (achievement.reward.type) {
-    case 'tiberium':
-      game.tiberium += achievement.reward.value;
-      game.totalEarned += achievement.reward.value;
-      break;
-    case 'clickPower':
-      game.clickPower += achievement.reward.value;
-      break;
-    case 'buildingBoost':
-      if (game.buildingMultipliers[achievement.reward.building]) {
-        game.buildingMultipliers[achievement.reward.building] *= achievement.reward.value;
-      }
-      break;
-    case 'allBuildingBoost':
-      buildingTypes.forEach((building) => {
-        game.buildingMultipliers[building.name] *= achievement.reward.value;
-      });
-      break;
-    default:
-      break;
-  }
-}
-
-function formatNum(value) {
-  return numberFormatter.format(value);
-}
-
-function getCredentials() {
-  return {
-    email: document.getElementById('email').value.trim(),
-    password: document.getElementById('password').value
-  };
-}
-
-function clearCredentials() {
-  document.getElementById('password').value = '';
-}
-
-function ensureLoggedIn() {
-  if (currentUid) return true;
-  window.alert('Please login or create an account first.');
-  return false;
-}
-
-function updateAuthStatus() {
-  const status = document.getElementById('authStatus');
-  const user = auth.currentUser;
-  status.textContent = user
-    ? `Logged in as ${user.email}. Progress saves to Firebase.`
-    : 'Not logged in. Create an account or login to save progress.';
-}
+// --- Auth / Firebase ---
+function getCredentials() { return { email: document.getElementById('email').value.trim(), password: document.getElementById('password').value }; }
+function clearCredentials() { document.getElementById('password').value=''; }
+function ensureLoggedIn() { if(currentUid) return true; alert('Login first.'); return false; }
+function updateAuthStatus() { const s=document.getElementById('authStatus'); const u=auth.currentUser; s.textContent=u?`Logged in as ${u.email}. Progress saves to Firebase.`:'Not logged in. Create an account or login to save progress.'; }
 
 async function loadCloudSave(uid) {
-  const saveDoc = await getDoc(doc(db, 'clickerSaves', uid));
-  if (saveDoc.exists()) {
-    game = normalizeGame(saveDoc.data());
-  } else {
-    const legacy = localStorage.getItem(LEGACY_SAVE_KEY);
-    if (legacy) {
-      try {
-        game = normalizeGame(JSON.parse(legacy));
-        localStorage.removeItem(LEGACY_SAVE_KEY);
-      } catch {
-        game = createDefaultGame();
-      }
-    } else {
-      game = createDefaultGame();
-    }
-    await saveNow();
-  }
-  ensureGameModel();
-  update();
-}
-
-async function saveNow() {
-  if (!currentUid) return;
-  await setDoc(doc(db, 'clickerSaves', currentUid), game);
-}
-
-function queueSave() {
-  if (!currentUid) return;
-  clearTimeout(saveTimeout);
-  saveTimeout = window.setTimeout(async () => {
-    await saveNow();
-  }, 300);
-}
-
-window.createAccount = async function createAccount() {
-  const { email, password } = getCredentials();
-  if (!email || !password) {
-    window.alert('Enter both email and password.');
-    return;
-  }
-
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    clearCredentials();
-  } catch (error) {
-    window.alert(error.message || 'Could not create account.');
-  }
-};
-
-window.login = async function login() {
-  const { email, password } = getCredentials();
-  if (!email || !password) {
-    window.alert('Enter both email and password.');
-    return;
-  }
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    clearCredentials();
-  } catch (error) {
-    window.alert(error.message || 'Login failed.');
-  }
-};
-
-window.logout = async function logout() {
-  await signOut(auth);
-};
-
-window.clickTiberium = function clickTiberium() {
-  if (!ensureLoggedIn()) return;
-
-  const gain = game.clickPower * (1 + game.prestige * 0.1);
-  game.tiberium += gain;
-  game.totalEarned += gain;
-  game.totalClicks += 1;
-  update();
-  queueSave();
-};
-
-window.buyBuilding = function buyBuilding(name) {
-  if (!ensureLoggedIn()) return;
-
-  const building = game.buildings[name];
-  if (game.tiberium >= building.cost) {
-    game.tiberium -= building.cost;
-    building.count += 1;
-    building.cost = Math.floor(building.cost * 1.15);
-    update();
-    queueSave();
-  }
-};
-
-window.buyUpgrade = function buyUpgrade(name) {
-  if (!ensureLoggedIn()) return;
-
-  const upgrade = upgradeTypes.find((item) => item.name === name);
-  if (upgrade && game.tiberium >= upgrade.cost && !game.upgrades[name] && upgradeUnlocked(upgrade)) {
-    game.tiberium -= upgrade.cost;
-    game.upgrades[name] = true;
-
-    if (upgrade.type === 'click') {
-      game.clickPower *= upgrade.multi;
-    } else if (upgrade.type === 'all') {
-      buildingTypes.forEach((building) => {
-        game.buildingMultipliers[building.name] *= upgrade.multi;
-      });
-    } else {
-      game.buildingMultipliers[upgrade.type] *= upgrade.multi;
-    }
-
-    update();
-    queueSave();
-  }
-};
-
-window.prestigeReset = function prestigeReset() {
-  if (!ensureLoggedIn()) return;
-
-  const crystals = Math.floor(game.totalEarned / 10000);
-  if (crystals > 0) {
-    game = createDefaultGame(game.prestige + crystals);
-    ensureGameModel();
-    update();
-    queueSave();
-  }
-};
-
-window.hardReset = function hardReset() {
-  if (!ensureLoggedIn()) return;
-
-  const confirmed = window.confirm('Reset all progress, including Prestige Crystals?');
-  if (!confirmed) return;
-
-  game = createDefaultGame();
+  const saveDoc=await getDoc(doc(db,'clickerSaves',uid));
+  if(saveDoc.exists()) game=normalizeGame(saveDoc.data());
+  else game=createDefaultGame();
   ensureGameModel();
   update();
   queueSave();
+  updateLeaderboard();
+}
+async function saveNow() { if(!currentUid) return await setDoc(doc(db,'clickerSaves',currentUid),game); }
+function queueSave() { if(!currentUid) return; clearTimeout(saveTimeout); saveTimeout=setTimeout(async()=>await saveNow(),300); }
+
+window.createAccount = async function(){const {email,password}=getCredentials();if(!email||!password){alert('Enter both email/password.');return;}try{await createUserWithEmailAndPassword(auth,email,password);clearCredentials();}catch(e){alert(e.message||'Error');}};
+window.login = async function(){const {email,password}=getCredentials();if(!email||!password){alert('Enter both email/password.');return;}try{await signInWithEmailAndPassword(auth,email,password);clearCredentials();}catch(e){alert(e.message||'Error');}};
+window.logout = async function(){await signOut(auth);};
+
+// --- Click / Buy / Prestige ---
+window.clickTiberium = function(){
+  if(!ensureLoggedIn()) return;
+  const gain = game.clickPower*(1+game.prestige*0.1);
+  game.tiberium+=gain; game.totalEarned+=gain; game.totalClicks+=1;
+  showFloating('+ '+formatNum(gain));
+  update(); queueSave(); updateLeaderboard();
 };
 
-function getBuildingTps(buildingName) {
-  const buildingType = buildingTypes.find((building) => building.name === buildingName);
-  const buildingState = game.buildings[buildingName];
-  return buildingType.tps * buildingState.count * game.buildingMultipliers[buildingName] * (1 + game.prestige * 0.1);
+window.buyBuilding = function(name){
+  if(!ensureLoggedIn()) return;
+  const b=game.buildings[name]; if(game.tiberium>=b.cost){game.tiberium-=b.cost; b.count+=1; b.cost=Math.floor(b.cost*1.15); update(); queueSave(); updateLeaderboard(); }
+};
+
+window.buyUpgrade = function(name){
+  if(!ensureLoggedIn()) return;
+  const u=upgradeTypes.find(u=>u.name===name); if(u && !game.upgrades[name] && game.tiberium>=u.cost && upgradeUnlocked(u)){
+    game.tiberium-=u.cost; game.upgrades[name]=true;
+    if(u.type==='click') game.clickPower*=u.multi;
+    else if(u.type==='all') buildingTypes.forEach(b=>game.buildingMultipliers[b.name]*=u.multi);
+    else game.buildingMultipliers[u.type]*=u.multi;
+    update(); queueSave();
+  }
+};
+
+window.prestigeReset=function(){ if(!ensureLoggedIn()) return; const crystals=Math.floor(game.totalEarned/10000); if(crystals>0){game=createDefaultGame(game.prestige+crystals); ensureGameModel(); update(); queueSave(); updateLeaderboard(); } };
+window.hardReset=function(){ if(!ensureLoggedIn()) return; if(confirm('Reset all progress?')){game=createDefaultGame(); ensureGameModel(); update(); queueSave(); updateLeaderboard(); } };
+
+// --- Floating Tiberium ---
+function showFloating(text){
+  const btn=document.querySelector('.actions .primary');
+  const span=document.createElement('span'); span.className='floating-tiberium'; span.textContent=text;
+  btn.appendChild(span);
+  setTimeout(()=>span.remove(),800);
 }
 
-function update() {
+// --- Leaderboard ---
+async function updateLeaderboard(){
+  if(!currentUid) return;
+  const q=query(collection(db,'clickerSaves'),orderBy('totalEarned','desc'),limit(10));
+  const snap=await getDocs(q);
+  const ul=document.getElementById('leaderboardList'); ul.innerHTML='';
+  snap.forEach(doc=>{const li=document.createElement('li'); li.textContent=`${doc.data().email||doc.id}: ${formatNum(doc.data().totalEarned||0)}`; ul.appendChild(li);});
+}
+
+// --- Helpers ---
+function ensureGameModel(){
+  buildingTypes.forEach(b=>{if(!game.buildings[b.name])game.buildings[b.name]={count:0,cost:b.base}; if(!game.buildingMultipliers[b.name]) game.buildingMultipliers[b.name]=1;});
+  upgradeTypes.forEach(u=>{if(game.upgrades[u.name]===undefined) game.upgrades[u.name]=false;});
+  achievementTypes.forEach(a=>{if(game.achievements[a.name]===undefined) game.achievements[a.name]=false;});
+}
+function upgradeUnlocked(u){if(!u.unlock) return true; const owned=game.buildings[u.unlock.building]?.count||0; return owned>=u.unlock.count;}
+function applyAchievementReward(a){if(!a.reward)return; switch(a.reward.type){case 'tiberium': game.tiberium+=a.reward.value; game.totalEarned+=a.reward.value; break; case 'clickPower': game.clickPower+=a.reward.value; break; case 'buildingBoost': game.buildingMultipliers[a.reward.building]*=a.reward.value; break; case 'allBuildingBoost': buildingTypes.forEach(b=>game.buildingMultipliers[b.name]*=a.reward.value); break;}}
+
+// --- Wire UI ---
+function wireRows(){
+  buildingTypes.forEach(b=>{const div=document.createElement('div'); div.id=`b-${b.name}`; div.className='row-item'; div.innerHTML=`<span>${b.name}<br>Owned: <strong class='count'>0</strong> · Boost: <strong class='boost'>x1</strong> · Cost: <strong class='cost'>0</strong></span><button onclick="buyBuilding('${b.name}')">Buy</button>`; document.getElementById('buildings').appendChild(div);});
+  upgradeTypes.forEach(u=>{const div=document.createElement('div'); div.id=`u-${u.name}`; div.className='row-item'; div.innerHTML=`<span>${u.name} (<strong>${formatNum(u.cost)}</strong>)<small class='lock-note'></small></span><button onclick="buyUpgrade('${u.name}')">Buy</button>`; document.getElementById('upgrades').appendChild(div);});
+  achievementTypes.forEach(a=>{const div=document.createElement('div'); div.id=`a-${a.name}`; div.className='row-item'; div.innerHTML=`<span>${a.name}<br><small>${a.description}</small></span>`; document.getElementById('achievements').appendChild(div);});
+}
+
+// --- Update ---
+function update(){
   updateAuthStatus();
-  const canPlay = Boolean(currentUid);
+  const canPlay=Boolean(currentUid);
+  document.getElementById('tiberium').textContent=formatNum(Math.floor(game.tiberium));
+  document.getElementById('clickPower').textContent=formatNum(game.clickPower);
+  document.getElementById('harvestPreview').textContent=formatNum(game.clickPower*(1+game.prestige*0.1));
+  document.getElementById('totalClicks').textContent=formatNum(game.totalClicks);
+  document.getElementById('totalEarned').textContent=formatNum(Math.floor(game.totalEarned));
+  document.getElementById('prestige').textContent=formatNum(game.prestige);
 
-  document.getElementById('tiberium').textContent = formatNum(Math.floor(game.tiberium));
-  document.getElementById('clickPower').textContent = formatNum(game.clickPower);
-  document.getElementById('harvestPreview').textContent = formatNum(game.clickPower * (1 + game.prestige * 0.1));
-  document.getElementById('totalClicks').textContent = formatNum(game.totalClicks);
-  document.getElementById('totalEarned').textContent = formatNum(Math.floor(game.totalEarned));
-  document.getElementById('prestige').textContent = formatNum(game.prestige);
-
-  buildingTypes.forEach((building) => {
-    const row = document.getElementById(`b-${building.name}`);
-    const canAfford = game.tiberium >= game.buildings[building.name].cost;
-    row.querySelector('.count').textContent = formatNum(game.buildings[building.name].count);
-    row.querySelector('.boost').textContent = `x${formatNum(game.buildingMultipliers[building.name])}`;
-    row.querySelector('.cost').textContent = formatNum(game.buildings[building.name].cost);
-    row.querySelector('button').disabled = !canAfford || !canPlay;
+  buildingTypes.forEach(b=>{
+    const row=document.getElementById(`b-${b.name}`);
+    const canAfford=game.tiberium>=game.buildings[b.name].cost;
+    row.querySelector('.count').textContent=formatNum(game.buildings[b.name].count);
+    row.querySelector('.boost').textContent=`x${formatNum(game.buildingMultipliers[b.name])}`;
+    row.querySelector('.cost').textContent=formatNum(game.buildings[b.name].cost);
+    row.querySelector('button').disabled=!canAfford||!canPlay;
   });
 
-  const totalTPS = getTotalTps();
-  document.getElementById('tps').textContent = formatNum(Math.floor(totalTPS));
+  const totalTPS=getTotalTps();
+  document.getElementById('tps').textContent=formatNum(Math.floor(totalTPS));
 
-  upgradeTypes.forEach((upgrade) => {
-    const upgradeRow = document.getElementById(`u-${upgrade.name}`);
-    if (game.upgrades[upgrade.name]) {
-      upgradeRow.style.display = 'none';
-    } else {
-      upgradeRow.style.display = 'flex';
-      const unlocked = upgradeUnlocked(upgrade);
-      const lockNote = upgradeRow.querySelector('.lock-note');
-      lockNote.textContent = unlocked ? '' : describeUnlockRequirement(upgrade.unlock);
-      upgradeRow.querySelector('button').disabled = game.tiberium < upgrade.cost || !canPlay || !unlocked;
-    }
+  upgradeTypes.forEach(u=>{
+    const row=document.getElementById(`u-${u.name}`);
+    if(game.upgrades[u.name]) row.style.display='none';
+    else{row.style.display='flex'; const unlocked=upgradeUnlocked(u); row.querySelector('.lock-note').textContent=unlocked?'':`Requires ${u.unlock?.count} ${u.unlock?.building}(s)`; row.querySelector('button').disabled=game.tiberium<u.cost||!canPlay||!unlocked;}
   });
 
-  document.querySelectorAll('.actions button').forEach((button) => {
-    button.disabled = !canPlay;
-  });
-
-  achievementTypes.forEach((achievement) => {
-    const achievementRow = document.getElementById(`a-${achievement.name}`);
-    if (!game.achievements[achievement.name] && achievement.condition()) {
-      game.achievements[achievement.name] = true;
-      applyAchievementReward(achievement);
-    }
-    if (game.achievements[achievement.name]) {
-      achievementRow.classList.add('achievement-earned');
-      achievementRow.innerHTML = `<span>✔ ${achievement.name}<br><small>${achievement.description}</small></span>`;
-    }
+  achievementTypes.forEach(a=>{
+    const row=document.getElementById(`a-${a.name}`);
+    if(!game.achievements[a.name] && a.condition()){game.achievements[a.name]=true; applyAchievementReward(a);}
+    if(game.achievements[a.name]){row.classList.add('achievement-earned'); row.innerHTML=`<span>✔ ${a.name}<br><small>${a.description}</small></span>`;}
   });
 }
 
-window.closeHowToModal = function closeHowToModal() {
-  document.getElementById('howtoModal').classList.add('hidden');
-};
+// --- Passive Tiberium ---
+setInterval(()=>{
+  if(!currentUid) return;
+  buildingTypes.forEach(b=>{const gain=getBuildingTps(b.name); game.tiberium+=gain; game.totalEarned+=gain;});
+  update(); queueSave(); updateLeaderboard();
+},1000);
 
-setInterval(() => {
-  if (!currentUid) return;
+wireRows(); ensureGameModel(); update();
 
-  buildingTypes.forEach((building) => {
-    const passiveGain = getBuildingTps(building.name);
-    game.tiberium += passiveGain;
-    game.totalEarned += passiveGain;
-  });
-  update();
-  queueSave();
-}, 1000);
-
-wireRows();
-ensureGameModel();
-update();
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUid = user.uid;
-    await loadCloudSave(user.uid);
-  } else {
-    currentUid = '';
-    game = createDefaultGame();
-    ensureGameModel();
-    update();
-  }
+onAuthStateChanged(auth,async user=>{
+  if(user){currentUid=user.uid; await loadCloudSave(user.uid);} else{currentUid=''; game=createDefaultGame(); ensureGameModel(); update();}
 });
 </script>
 </body>
