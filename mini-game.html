@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiberium Clicker</title>
+<style>
+:root {
+  --bg: #07080a;
+  --panel: #101712;
+  --panel-2: #0d140f;
+  --text: #dff6df;
+  --muted: #9fb39f;
+  --accent: #7CFF7C;
+  --border: #223527;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top, #12151a 0%, var(--bg) 60%);
+}
+
+a { color: inherit; }
+
+.wrap {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 1rem 0 2.2rem;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.back-link {
+  text-decoration: none;
+  color: #b8d8b8;
+  border: 1px solid #38553f;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.92rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  color: var(--accent);
+}
+
+.panel {
+  background: linear-gradient(170deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  position: relative;
+}
+
+.auth-panel { margin-bottom: 1rem; }
+.auth-title {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+.auth-status {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.auth-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.auth-row input {
+  background: #0a110c;
+  color: var(--text);
+  border: 1px solid #2b4631;
+  border-radius: 10px;
+  padding: 0.62rem 0.72rem;
+  min-width: 200px;
+}
+.auth-note {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  background: #0a110c;
+  border: 1px solid #1d3023;
+  border-radius: 10px;
+  padding: 0.75rem;
+  position: relative;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+button {
+  margin: 0;
+  padding: 0.66rem 0.92rem;
+  border-radius: 10px;
+  border: 1px solid #2f4a35;
+  background: linear-gradient(180deg, #142018, #0f1612);
+  color: #e0f5e0;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  font-weight: 600;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  border-color: #4d8c58;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  border-color: #2f4a35;
+}
+
+.primary {
+  border-color: #4f915a;
+  background: linear-gradient(120deg, #2f8e42, #246f34);
+}
+
+.section-title {
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.row-item {
+  background: #0a110c;
+  border: 1px solid #1d3023;
+  border-radius: 10px;
+  padding: 0.65rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.row-item span { color: #d0e8d0; }
+
+.lock-note {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #f0c68f;
+}
+
+.achievement-earned {
+  border-color: #226f58;
+  background: #0b1715;
+  color: #89f5db;
+}
+
+.footer-note {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.floating-tiberium {
+  position: absolute;
+  color: #7CFF7C;
+  font-weight: 700;
+  animation: floatUp 0.8s ease-out forwards;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-50px); opacity: 0; }
+}
+
+#leaderboard {
+  margin-top: 1rem;
+  border: 1px solid #38553f;
+  border-radius: 10px;
+  padding: 0.7rem;
+  background: #0d140f;
+}
+
+#leaderboard h2 {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+}
+
+#leaderboard ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+#leaderboard li {
+  margin-bottom: 0.25rem;
+  color: #cce7cc;
+}
+
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h1>Tiberium Clicker</h1>
+  </div>
+
+  <main class="panel">
+    <section class="panel auth-panel" aria-label="Account controls">
+      <h2 class="auth-title">Account (Firebase)</h2>
+      <p class="auth-status" id="authStatus">Not logged in</p>
+      <div class="auth-row">
+        <input id="username" type="text" placeholder="Username (new users)" aria-label="Username">
+        <input id="email" type="email" autocomplete="username" placeholder="Email" aria-label="Email">
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
+        <button onclick="createAccount()">Create Account</button>
+        <button onclick="login()">Login</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+      <p class="auth-note">Account and save data are stored in Firebase. You must login to play/save.</p>
+    </section>
+
+    <section class="stats-grid" aria-label="Game stats">
+      <div class="stat"><div class="stat-label">Tiberium</div><div class="stat-value" id="tiberium">0</div></div>
+      <div class="stat"><div class="stat-label">TPS</div><div class="stat-value" id="tps">0</div></div>
+      <div class="stat"><div class="stat-label">Prestige Crystals</div><div class="stat-value" id="prestige">0</div></div>
+      <div class="stat"><div class="stat-label">Click Power</div><div class="stat-value" id="clickPower">1</div></div>
+      <div class="stat"><div class="stat-label">Total Clicks</div><div class="stat-value" id="totalClicks">0</div></div>
+      <div class="stat"><div class="stat-label">Total Earned</div><div class="stat-value" id="totalEarned">0</div></div>
+    </section>
+
+    <section class="actions">
+      <button class="primary" onclick="clickTiberium()">Harvest (+<span id="harvestPreview">1</span>)</button>
+      <button onclick="prestigeReset()">Prestige Reset</button>
+      <button onclick="hardReset()">Full Reset</button>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <h2 class="section-title">Buildings</h2>
+        <div id="buildings" class="list"></div>
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Upgrades</h2>
+        <div id="upgrades" class="list"></div>
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Achievements</h2>
+        <div id="achievements" class="list"></div>
+      </article>
+    </section>
+
+    <section id="leaderboard" class="panel">
+      <h2>Top 10 Players</h2>
+      <ul id="leaderboardList"></ul>
+    </section>
+
+    <p class="footer-note">Tip: Prestige gives a permanent bonus to clicking and building production.</p>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js';
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyDC2abQAAaQSxYxZ7g3_OKqQqlqPHCPyu4',
+  authDomain: 'my-website-80cbb.firebaseapp.com',
+  projectId: 'my-website-80cbb',
+  storageBucket: 'my-website-80cbb.firebasestorage.app',
+  messagingSenderId: '781604542143',
+  appId: '1:781604542143:web:50a7bf43fe987a306a980a',
+  measurementId: 'G-8BXHP342KD'
+};
+
+const app = initializeApp(firebaseConfig);
+getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const numberFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+const LEGACY_SAVE_KEY = 'tibSave';
+
+let game = createDefaultGame();
+let currentUid = '';
+let saveTimeout = 0;
+let currentUsername = '';
+
+function createDefaultGame() {
+  return {
+    tiberium: 0,
+    totalClicks: 0,
+    totalEarned: 0,
+    clickPower: 1,
+    prestigePoints: 0,
+    lastUpdateTime: Date.now(),
+    buildings: [
+      { id: 'harvester', name: 'Harvester', cost: 10, owned: 0, production: 1, description: 'Slowly harvests Tiberium' },
+      { id: 'refinery', name: 'Refinery', cost: 100, owned: 0, production: 10, description: 'Processes raw Tiberium' },
+      { id: 'infantry', name: 'Infantry', cost: 1000, owned: 0, production: 100, description: 'Military unit production' },
+      { id: 'tank', name: 'Tank', cost: 10000, owned: 0, production: 1000, description: 'Heavy armor division' },
+      { id: 'airfield', name: 'Airfield', cost: 100000, owned: 0, production: 10000, description: 'Air superiority' }
+    ],
+    upgrades: [
+      { id: 'sharp_clicks', name: 'Sharp Clicks', cost: 50, owned: 0, multiplier: 1.2, description: 'Increase click power by 20%', type: 'click' },
+      { id: 'efficiency', name: 'Efficiency Module', cost: 500, owned: 0, multiplier: 1.15, description: 'Buildings produce 15% more', type: 'production' },
+      { id: 'ionbeam', name: 'Ion Beam', cost: 5000, owned: 0, multiplier: 1.25, description: 'Advanced harvesting +25%', type: 'production' },
+      { id: 'obelisk', name: 'Obelisk of Light', cost: 10000, owned: 0, multiplier: 1.2, description: 'NOD superweapon +20%', type: 'production' },
+      { id: 'mammoth', name: 'Mammoth Tank', cost: 15000, owned: 0, multiplier: 1.3, description: 'GDI heavy unit +30%', type: 'production' },
+      { id: 'black_hand', name: 'Black Hand Tactics', cost: 20000, owned: 0, multiplier: 1.25, description: 'NOD elite unit +25%', type: 'production' },
+      { id: 'gdi_ranger', name: 'GDI Ranger Squad', cost: 25000, owned: 0, multiplier: 1.22, description: 'Commando training +22%', type: 'production' },
+      { id: 'tiberium_spike', name: 'Tiberium Spike', cost: 30000, owned: 0, multiplier: 1.35, description: 'Pure Tiberium extraction +35%', type: 'production' },
+      { id: 'temple_nod', name: 'Temple of Nod', cost: 50000, owned: 0, multiplier: 1.4, description: 'Massive NOD structure +40%', type: 'production' },
+      { id: 'ion_cannon', name: 'Ion Cannon', cost: 75000, owned: 0, multiplier: 1.5, description: 'GDI superweapon +50%', type: 'production' },
+      { id: 'nuclear_missile', name: 'Nuclear Missile', cost: 100000, owned: 0, multiplier: 1.45, description: 'Devastating strike +45%', type: 'production' },
+      { id: 'liquid_tiberium', name: 'Liquid Tiberium', cost: 150000, owned: 0, multiplier: 1.6, description: 'Volatile resource +60%', type: 'production' },
+      { id: 'stealth_tech', name: 'Stealth Technology', cost: 200000, owned: 0, multiplier: 1.35, description: 'Hidden operations +35%', type: 'production' },
+      { id: 'space_satellite', name: 'Space Satellite', cost: 250000, owned: 0, multiplier: 1.55, description: 'Orbital defense +55%', type: 'production' },
+      { id: 'weather_machine', name: 'Weather Machine', cost: 300000, owned: 0, multiplier: 1.7, description: 'Environmental control +70%', type: 'production' },
+      { id: 'tiberium_core', name: 'Tiberium Core', cost: 400000, owned: 0, multiplier: 1.75, description: 'Concentrated power +75%', type: 'production' },
+      { id: 'genetic_mutant', name: 'Genetic Mutant Army', cost: 500000, owned: 0, multiplier: 1.8, description: 'Superhuman soldiers +80%', type: 'production' },
+      { id: 'cyber_assault', name: 'Cyber Assault Unit', cost: 600000, owned: 0, multiplier: 1.85, description: 'Digital warfare +85%', type: 'production' },
+      { id: 'orbital_strike', name: 'Orbital Strike System', cost: 750000, owned: 0, multiplier: 1.9, description: 'From-space assault +90%', type: 'production' },
+      { id: 'tesla_coil', name: 'Tesla Coil Network', cost: 900000, owned: 0, multiplier: 1.95, description: 'Electrical pulse +95%', type: 'production' },
+      { id: 'scud_launcher', name: 'Scud Launcher', cost: 1100000, owned: 0, multiplier: 2.0, description: 'Mobile artillery +100%', type: 'production' },
+      { id: 'nuke_facility', name: 'Nuclear Facility', cost: 1350000, owned: 0, multiplier: 2.1, description: 'Atomic energy +110%', type: 'production' },
+      { id: 'hover_craft', name: 'Hover Craft Fleet', cost: 1650000, owned: 0, multiplier: 2.2, description: 'Advanced transport +120%', type: 'production' },
+      { id: 'laser_tower', name: 'Laser Defense Tower', cost: 2000000, owned: 0, multiplier: 2.3, description: 'Energy weapon +130%', type: 'production' },
+      { id: 'cyborg_commando', name: 'Cyborg Commando', cost: 2500000, owned: 0, multiplier: 2.4, description: 'Machine warrior +140%', type: 'production' },
+      { id: 'clone_chamber', name: 'Clone Chamber', cost: 3000000, owned: 0, multiplier: 2.5, description: 'Endless soldiers +150%', type: 'production' },
+      { id: 'quantum_reactor', name: 'Quantum Reactor', cost: 3750000, owned: 0, multiplier: 2.7, description: 'Quantum energy +170%', type: 'production' },
+      { id: 'chronosphere', name: 'Chronosphere Device', cost: 4500000, owned: 0, multiplier: 2.9, description: 'Time manipulation +190%', type: 'production' },
+      { id: 'mirage_tank', name: 'Mirage Tank Squad', cost: 5500000, owned: 0, multiplier: 3.0, description: 'Invisible armor +200%', type: 'production' },
+      { id: 'harkonnen_palace', name: 'Harkonnen Palace', cost: 6500000, owned: 0, multiplier: 3.2, description: 'Ancient fortress +220%', type: 'production' },
+      { id: 'atreides_shield', name: 'Atreides Shield Generator', cost: 7500000, owned: 0, multiplier: 3.4, description: 'Protection field +240%', type: 'production' },
+      { id: 'corrino_tech', name: 'Corrino Technology', cost: 9000000, owned: 0, multiplier: 3.6, description: 'Imperial knowledge +260%', type: 'production' },
+      { id: 'guild_ship', name: 'Guild Navigator Ship', cost: 11000000, owned: 0, multiplier: 3.8, description: 'Space folding +280%', type: 'production' },
+      { id: 'spice_harvester', name: 'Spice Harvester', cost: 13000000, owned: 0, multiplier: 4.0, description: 'Desert treasure +300%', type: 'production' },
+      { id: 'sandworm', name: 'Sandworm Taming', cost: 15000000, owned: 0, multiplier: 4.2, description: 'Ancient beast +320%', type: 'production' },
+      { id: 'worm_rider', name: 'Worm Rider Legion', cost: 18000000, owned: 0, multiplier: 4.5, description: 'Monster cavalry +350%', type: 'production' },
+      { id: 'guild_reverend', name: 'Guild Reverend Mother', cost: 21000000, owned: 0, multiplier: 4.8, description: 'Mystical power +380%', type: 'production' },
+      { id: 'prana_bindu', name: 'Prana-Bindu Training', cost: 25000000, owned: 0, multiplier: 5.0, description: 'Mental powers +400%', type: 'production' },
+      { id: 'voice_command', name: 'Voice Command', cost: 30000000, owned: 0, multiplier: 5.3, description: 'Sonic dominance +430%', type: 'production' },
+      { id: 'bene_gesserit', name: 'Bene Gesserit Order', cost: 35000000, owned: 0, multiplier: 5.6, description: 'Sisterhood power +460%', type: 'production' },
+      { id: 'mentat_ai', name: 'Mentat AI System', cost: 42000000, owned: 0, multiplier: 5.9, description: 'Living computer +490%', type: 'production' },
+      { id: 'imperial_court', name: 'Imperial Court', cost: 50000000, owned: 0, multiplier: 6.2, description: 'Ultimate authority +520%', type: 'production' },
+      { id: 'kwisatz_haderach', name: 'Kwisatz Haderach', cost: 60000000, owned: 0, multiplier: 6.5, description: 'One chosen being +550%', type: 'production' },
+      { id: 'universe_control', name: 'Universe Control Array', cost: 75000000, owned: 0, multiplier: 7.0, description: 'Cosmic domination +600%', type: 'production' },
+      { id: 'multiversal_gate', name: 'Multiversal Gateway', cost: 100000000, owned: 0, multiplier: 8.0, description: 'Dimensional breach +700%', type: 'production' },
+      { id: 'reality_warp', name: 'Reality Warping Engine', cost: 150000000, owned: 0, multiplier: 9.0, description: 'Alter existence +800%', type: 'production' },
+      { id: 'singularity_forge', name: 'Singularity Forge', cost: 250000000, owned: 0, multiplier: 10.0, description: 'Create black holes +900%', type: 'production' },
+      { id: 'godlike_ascension', name: 'Tiberian Ascension', cost: 1e15, owned: 0, multiplier: 1000.0, description: 'Become one with Tiberium +99900%', type: 'production' }
+    ],
+    achievements: [
+      { id: 'first_harvest', name: 'First Harvest', description: 'Harvest 100 Tiberium', requirement: 100, type: 'totalEarned', earned: false },
+      { id: 'industrialist', name: 'Industrialist', description: 'Own 10 total buildings', requirement: 10, type: 'buildings', earned: false },
+      { id: 'billionaire', name: 'Billionaire', description: 'Earn 1,000,000 Tiberium', requirement: 1000000, type: 'totalEarned', earned: false },
+      { id: 'clicker', name: 'Clicker', description: 'Click 10,000 times', requirement: 10000, type: 'totalClicks', earned: false }
+    ]
+  };
+}
+
+function normalizeGame(g) {
+  const def = createDefaultGame();
+  g.buildings = g.buildings || [];
+  g.upgrades = g.upgrades || [];
+  g.achievements = g.achievements || [];
+  for (let b of def.buildings) {
+    if (!g.buildings.find(x => x.id === b.id)) g.buildings.push({ ...b });
+  }
+  for (let u of def.upgrades) {
+    if (!g.upgrades.find(x => x.id === u.id)) g.upgrades.push({ ...u });
+  }
+  for (let a of def.achievements) {
+    if (!g.achievements.find(x => x.id === a.id)) g.achievements.push({ ...a });
+  }
+  return g;
+}
+
+function formatNum(n) {
+  if (n >= 1e9) return numberFormatter.format(n / 1e9) + 'B';
+  if (n >= 1e6) return numberFormatter.format(n / 1e6) + 'M';
+  if (n >= 1e3) return numberFormatter.format(n / 1e3) + 'K';
+  return Math.floor(n).toString();
+}
+
+function getTotalBuildingCount() {
+  return game.buildings.reduce((sum, b) => sum + (b.owned || 0), 0);
+}
+
+function getProductionPerSecond() {
+  let pps = 0;
+  for (let b of game.buildings) {
+    let prod = b.production || 0;
+    for (let u of game.upgrades) {
+      if (u.owned && u.type === 'production') prod *= u.multiplier;
+    }
+    pps += prod * (b.owned || 0);
+  }
+  return pps * (1 + game.prestigePoints * 0.1);
+}
+
+window.clickTiberium = function() {
+  let power = game.clickPower;
+  for (let u of game.upgrades) {
+    if (u.owned && u.type === 'click') power *= u.multiplier;
+  }
+  power *= (1 + game.prestigePoints * 0.1);
+  game.tiberium += power;
+  game.totalClicks += 1;
+  game.totalEarned += power;
+  checkAchievements();
+  scheduleUpdate();
+};
+
+window.buyBuilding = function(id) {
+  let b = game.buildings.find(x => x.id === id);
+  if (!b) return;
+  if (game.tiberium >= b.cost) {
+    game.tiberium -= b.cost;
+    b.owned = (b.owned || 0) + 1;
+    b.cost = Math.ceil(b.cost * 1.12);
+    checkAchievements();
+    scheduleUpdate();
+  }
+};
+
+window.buyUpgrade = function(id) {
+  let u = game.upgrades.find(x => x.id === id);
+  if (!u) return;
+  if (game.tiberium >= u.cost) {
+    game.tiberium -= u.cost;
+    u.owned = (u.owned || 0) + 1;
+    u.cost = Math.ceil(u.cost * 1.15);
+    checkAchievements();
+    scheduleUpdate();
+  }
+};
+
+function checkAchievements() {
+  for (let a of game.achievements) {
+    if (a.earned) continue;
+    let unlocked = false;
+    if (a.type === 'totalEarned' && game.totalEarned >= a.requirement) unlocked = true;
+    if (a.type === 'totalClicks' && game.totalClicks >= a.requirement) unlocked = true;
+    if (a.type === 'buildings' && getTotalBuildingCount() >= a.requirement) unlocked = true;
+    if (unlocked) a.earned = true;
+  }
+}
+
+window.prestigeReset = function() {
+  if (game.totalEarned < 1000) { alert('Need 1,000 total earned to prestige.'); return; }
+  const prestigeGain = Math.floor(Math.sqrt(game.totalEarned / 1000));
+  game.prestigePoints += prestigeGain;
+  game = createDefaultGame();
+  game.prestigePoints += prestigeGain;
+  game = normalizeGame(game);
+  scheduleUpdate();
+};
+
+window.hardReset = function() {
+  if (!confirm('Are you SURE? This resets everything and costs all prestige!')) return;
+  game = createDefaultGame();
+  game = normalizeGame(game);
+  scheduleUpdate();
+};
+
+function createFloatingText(amount, x, y) {
+  let el = document.createElement('div');
+  el.className = 'floating-tiberium';
+  el.textContent = '+' + formatNum(amount);
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  document.querySelector('.actions').appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+async function updateLeaderboard() {
+  const q = query(collection(db,'clickerSaves'), orderBy('totalEarned','desc'), limit(10));
+  const snap = await getDocs(q);
+  const ul = document.getElementById('leaderboardList'); 
+  ul.innerHTML = '';
+  for(const docSnap of snap.docs) {
+    const uid = docSnap.id;
+    const saveData = docSnap.data();
+    const userDoc = await getDoc(doc(db,'users',uid));
+    const uname = userDoc.exists() ? userDoc.data().username || uid : uid;
+    const li = document.createElement('li');
+    li.textContent = `${uname}: ${formatNum(saveData.totalEarned||0)}`;
+    ul.appendChild(li);
+  }
+}
+
+function wireRows() {
+  const bDiv = document.getElementById('buildings');
+  bDiv.innerHTML = '';
+  for (let b of game.buildings) {
+    const canAfford = game.tiberium >= b.cost;
+    const item = document.createElement('div');
+    item.className = 'row-item';
+    item.innerHTML = `<div><strong>${b.name}</strong><span>${b.owned}</span><br><span class="lock-note">${b.description}</span></div><button ${canAfford ? '' : 'disabled'}>${formatNum(b.cost)}</button>`;
+    item.querySelector('button').onclick = () => { window.buyBuilding(b.id); };
+    bDiv.appendChild(item);
+  }
+
+  const uDiv = document.getElementById('upgrades');
+  uDiv.innerHTML = '';
+  for (let u of game.upgrades) {
+    const canAfford = game.tiberium >= u.cost;
+    const item = document.createElement('div');
+    item.className = 'row-item';
+    item.innerHTML = `<div><strong>${u.name}</strong><span>${u.owned}</span><br><span class="lock-note">${u.description}</span></div><button ${canAfford ? '' : 'disabled'}>${formatNum(u.cost)}</button>`;
+    item.querySelector('button').onclick = () => { window.buyUpgrade(u.id); };
+    uDiv.appendChild(item);
+  }
+
+  const aDiv = document.getElementById('achievements');
+  aDiv.innerHTML = '';
+  for (let a of game.achievements) {
+    const item = document.createElement('div');
+    item.className = 'row-item' + (a.earned ? ' achievement-earned' : '');
+    item.innerHTML = `<div><strong>${a.name}</strong><br><span class="lock-note">${a.description}</span></div>`;
+    aDiv.appendChild(item);
+  }
+}
+
+function update() {
+  const now = Date.now();
+  const delta = (now - game.lastUpdateTime) / 1000;
+  game.lastUpdateTime = now;
+
+  const pps = getProductionPerSecond();
+  game.tiberium += pps * delta;
+  game.totalEarned += pps * delta;
+
+  document.getElementById('tiberium').textContent = formatNum(game.tiberium);
+  document.getElementById('tps').textContent = formatNum(pps);
+  document.getElementById('prestige').textContent = game.prestigePoints;
+  document.getElementById('totalClicks').textContent = formatNum(game.totalClicks);
+  document.getElementById('totalEarned').textContent = formatNum(game.totalEarned);
+
+  let clickPower = game.clickPower;
+  for (let u of game.upgrades) {
+    if (u.owned && u.type === 'click') clickPower *= u.multiplier;
+  }
+  clickPower *= (1 + game.prestigePoints * 0.1);
+  document.getElementById('clickPower').textContent = formatNum(clickPower);
+  document.getElementById('harvestPreview').textContent = formatNum(clickPower);
+
+  wireRows();
+}
+
+function scheduleUpdate() {
+  clearTimeout(saveTimeout);
+  update();
+  saveTimeout = setTimeout(saveToDB, 1000);
+}
+
+async function saveToDB() {
+  if (!auth.currentUser) return;
+  try {
+    const gameData = {
+      ...game,
+      lastUpdateTime: Date.now()
+    };
+    await setDoc(doc(db, 'clickerSaves', auth.currentUser.uid), gameData);
+    await updateLeaderboard();
+  } catch (e) {
+    console.error('Save error:', e);
+  }
+}
+
+async function loadFromDB() {
+  if (!auth.currentUser) return false;
+  try {
+    const docSnap = await getDoc(doc(db, 'clickerSaves', auth.currentUser.uid));
+    if (docSnap.exists()) {
+      game = normalizeGame(docSnap.data());
+      game.lastUpdateTime = Date.now();
+      update();
+      return true;
+    }
+  } catch (e) {
+    console.error('Load error:', e);
+  }
+  return false;
+}
+
+function getCredentials() {
+  return {
+    email: document.getElementById('email').value.trim(),
+    password: document.getElementById('password').value.trim()
+  };
+}
+
+function clearCredentials() {
+  document.getElementById('email').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('username').value = '';
+}
+
+window.createAccount = async function() {
+  const { email, password } = getCredentials();
+  const username = document.getElementById('username').value.trim();
+  if (!email || !password || !username) {
+    alert('Enter email, password, AND username.');
+    return;
+  }
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    currentUid = cred.user.uid;
+    currentUsername = username;
+    await setDoc(doc(db, 'users', currentUid), { username });
+    clearCredentials();
+    updateAuthStatus();
+    await loadFromDB();
+  } catch (e) {
+    alert(e.message || 'Error');
+  }
+};
+
+window.login = async function() {
+  const { email, password } = getCredentials();
+  if (!email || !password) {
+    alert('Enter both email/password.');
+    return;
+  }
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    currentUid = cred.user.uid;
+    const uDoc = await getDoc(doc(db, 'users', currentUid));
+    currentUsername = uDoc.exists() ? uDoc.data().username || cred.user.email : cred.user.email;
+    clearCredentials();
+    updateAuthStatus();
+    await loadFromDB();
+  } catch (e) {
+    alert(e.message || 'Error');
+  }
+};
+
+window.logout = async function() {
+  await signOut(auth);
+  currentUid = '';
+  currentUsername = '';
+  game = createDefaultGame();
+  game = normalizeGame(game);
+  updateAuthStatus();
+  update();
+};
+
+function updateAuthStatus() {
+  const s = document.getElementById('authStatus');
+  if (auth.currentUser) {
+    s.textContent = `Logged in as ${currentUsername || auth.currentUser.email}. Progress saves to Firebase.`;
+  } else {
+    s.textContent = 'Not logged in. Create an account or login to save progress.';
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUid = user.uid;
+    const uDoc = await getDoc(doc(db, 'users', user.uid));
+    currentUsername = uDoc.exists() ? uDoc.data().username || user.email : user.email;
+    updateAuthStatus();
+    await loadFromDB();
+  } else {
+    currentUid = '';
+    currentUsername = '';
+    game = createDefaultGame();
+    game = normalizeGame(game);
+    updateAuthStatus();
+    update();
+  }
+});
+
+game = normalizeGame(game);
+update();
+setInterval(update, 100);
+
+</script>
+</body>
+</html>
